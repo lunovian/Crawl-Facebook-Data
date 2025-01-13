@@ -85,8 +85,8 @@ if __name__ == "__main__":
     driver = "./chromedriver.exe"
     cookies_path = "my_cookies.pkl"
 
-    page_link = "https://www.facebook.com/mocchaumilk"
-    page_name = "mocchaumilk"
+    page_link = ""
+    page_name = ""
 
     # End timing the process
     start_time = time()
