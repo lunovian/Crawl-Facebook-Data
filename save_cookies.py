@@ -21,10 +21,10 @@ sleep(5)
 
 # Enter the login information
 user = browser.find_element(By.ID, "email")
-user.send_keys("") # enter your email
+user.send_keys("823579924940@1secmail.com") # enter your email
 
 password = browser.find_element(By.ID, "pass")
-password.send_keys("") # enter your password
+password.send_keys("swArAhb36") # enter your password
 
 # Login
 login_button = browser.find_element(By.NAME, "login")

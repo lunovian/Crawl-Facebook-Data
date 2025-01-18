@@ -9,7 +9,7 @@ def crawl(driver, cookies_path, page_link, page_name):
     browser = cf.login(driver, cookies_path)
     browser_mobile = cf.login_mobile(driver, cookies_path)
 
-    post_urls, video_urls = cf.get_post_links(browser, page_link)
+    post_urls = cf.get_post_links(browser, page_link)
 
     if not os.path.exists(f"data/{page_name}"):
         os.makedirs(f"data/{page_name}")
@@ -20,73 +20,109 @@ def crawl(driver, cookies_path, page_link, page_name):
         folder = f"data/{page_name}/{id}"
         if not os.path.exists(folder):
             os.makedirs(folder)
+            
+        if "posts" in url:
+            browser.get(url)
 
-        browser.get(url)
+            captions = cf.get_captions_emojis(browser)
+            cf.save_text(captions, f"{folder}/caption.txt")
 
-        captions = cf.get_captions_emojis(browser)
-        cf.save_text(captions, f"{folder}/caption.txt")
+            comments = cf.get_comments(browser)
+            cf.save_text(comments, f"{folder}/comments.txt")
 
-        comments = cf.get_comments(browser)
-        cf.save_text(comments, f"{folder}/comments.txt")
+            img_urls = cf.get_image_urls(browser)
+            cf.download_images(img_urls, folder)
 
-        img_urls = cf.get_image_urls(browser)
-        cf.download_images(img_urls, folder)
+        elif "videos" in url:
+            browser.get(url)
 
-    # Process video URLs
-    for url in tqdm(video_urls, desc="Processing Videos Posts"):
-        id = cf.extract_facebook_post_id(url)
-        folder = f"data/{page_name}/{id}"
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-
-        browser.get(url)
-
-        try:
-            cf.click_see_more(browser)
-        except:
-            pass
-
-        captions = cf.get_captions_spe(browser)
-        cf.save_text(captions, f"{folder}/caption.txt")
-
-        try:
-            cf.click_see_less(browser)
-        except:
-            pass
-        
-
-        try:
-            cf.click_see_all(browser)
-            sleep(1)
-        except Exception:
-            pass
-
-        while True:
             try:
-                cf.click_view_more_comments(browser)
-                sleep(0.5)
+                cf.click_see_more(browser)
+            except:
+                pass
+
+            captions = cf.get_captions_spe(browser)
+            cf.save_text(captions, f"{folder}/caption.txt")
+
+            try:
+                cf.click_see_less(browser)
+            except:
+                pass
+            
+
+            try:
+                cf.click_see_all(browser)
+                sleep(1)
             except Exception:
-                break
+                pass
 
-        comments = cf.get_comments(browser)
-        cf.save_text(comments, f"{folder}/comments.txt")
+            while True:
+                try:
+                    cf.click_view_more_comments(browser)
+                    sleep(0.5)
+                except Exception:
+                    break
 
-        try:
-            sleep(5)
-            browser_mobile.get(url)
-            sleep(5)
-            video_urls = cf.get_video_urls(browser_mobile)
-            cf.download_videos(video_urls, folder)
-        except Exception:
-            continue
+            comments = cf.get_comments(browser)
+            cf.save_text(comments, f"{folder}/comments.txt")
+
+            try:
+                sleep(5)
+                browser_mobile.get(url)
+                sleep(5)
+                video_urls = cf.get_video_urls(browser_mobile)
+                cf.download_videos(video_urls, folder)
+            except Exception:
+                continue
+        
+        elif "reel" in url:
+            browser.get(url)
+
+            captions = cf.get_captions_reel(browser)
+
+            cf.save_text(captions, f"{folder}/caption.txt")
+
+            try:
+                cf.click_see_less(browser)
+            except:
+                pass
+
+
+            try:
+                cf.click_see_all(browser)
+                sleep(1)
+            except Exception:
+                pass
+
+            cf.click_comment_button(browser)
+
+            while True:
+                try:
+                    cf.click_view_more_comments(browser)
+                    sleep(0.5)
+                except Exception:
+                    break
+
+            comments = cf.get_comments(browser)
+            cf.save_text(comments, f"{folder}/comments.txt")
+
+            try:
+                sleep(5)
+                browser_mobile.get(url)
+                sleep(5)
+                video_urls = cf.get_video_urls(browser_mobile)
+                cf.download_videos(video_urls, folder)
+            except Exception:
+                pass
+
         
 
 if __name__ == "__main__":
     driver = "./chromedriver.exe"
     cookies_path = "my_cookies.pkl"
 
-    page_link = ""
-    page_name = ""
+    page_link = "https://www.facebook.com/vinamilkofficial"
+    page_name = "vinamilk"
 
     # End timing the process
     start_time = time()
