@@ -29,7 +29,7 @@ def click_see_more(driver):
     '''Click see more to show all captions'''
 
     # Click on the See more button
-    see_more_btn = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'See more')]")))
+    see_more_btn = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "See more") or contains(@aria-label, "See more")]')))
     see_more_btn.click()
     return None
 
@@ -41,17 +41,30 @@ def click_see_less(driver):
     see_more_btn.click()
     return None
 
+def click_comment_button(driver):
+    # Locate the "Comment" button by its aria-label
+    comment_button = driver.find_element(By.XPATH, '//div[@aria-label="Comment"]')
+    comment_button.click()
+    return None
+
 def click_view_more_comments(driver):
 
-    view_more_cmts_btn = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'View more comments')]")))
+    view_more_cmts_btn = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'View more comments')]"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", view_more_cmts_btn)  # Scroll into view
     view_more_cmts_btn.click()
     return None
 
 def click_see_all(driver):
     '''Click See all button to show comments'''
 
-    see_all_btn = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'See all')]")))
-    see_all_btn.click()
+    see_all_btn = WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'See all')]"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", see_all_btn)
+    driver.execute_script("arguments[0].click();", see_all_btn)
+
     return None
 
 def get_comments(driver):
@@ -165,7 +178,7 @@ def get_captions_emojis(driver):
     Extracts text and emojis from Facebook post captions.
     """
     caption_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a') or contains(@class, 'x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a')]")
-
+    
     captions = []
     for caption_element in caption_elements:
         try:
@@ -181,6 +194,7 @@ def get_captions_emojis(driver):
                             result.append(text)
             
                 captions.append(' '.join(result))
+
         except AttributeError as e:
             print(f"Error processing caption: {e}")
 
@@ -233,6 +247,58 @@ def get_captions_spe(driver):
 
     return captions
 
+def get_captions_reel(driver):
+
+    captions = []
+
+    try:
+        click_see_more(driver)
+    except:
+        pass
+
+    try:
+
+        caption_title = driver.find_element(By.XPATH, "//div[contains(@class, 'xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a') ]")
+
+        # print(caption_element.get_attribute("outerHTML"))
+
+        # Parse the HTML
+        soup = BeautifulSoup(caption_title.get_attribute("outerHTML"), 'html.parser')
+
+        # Extract caption text
+        caption_div = soup.find("div", class_="xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a")
+        caption_text = caption_div.get_text(separator=" ").strip()
+
+        # Remove "See less" if present
+        if "See less" in caption_text:
+            caption_text = caption_text.replace("See less", "").strip()
+
+        captions.append(caption_text)
+
+    except:
+        pass
+    
+    try:
+        captions_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a') ]")
+
+        for captions_element in captions_elements:
+            # Parse the HTML
+            soup = BeautifulSoup(captions_element.get_attribute("outerHTML"), 'html.parser')
+
+            # Extract caption text
+            caption_div = soup.find("div", class_="x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a")
+            caption_text = caption_div.get_text(separator=" ").strip()
+
+            # Remove "See less" if present
+            if "See less" in caption_text:
+                caption_text = caption_text.replace("See less", "").strip()
+
+            captions.append(caption_text)
+    except:
+        pass
+
+    return captions
+
 def get_image_urls(driver):
     """
     Crawls a Facebook post and extracts image URLs.
@@ -245,7 +311,7 @@ def get_image_urls(driver):
     """
 
     # Find image elements
-    image_elements = driver.find_elements(By.XPATH, ".//div[contains(@class, 'x10l6tqk x13vifvy')]/img")
+    image_elements = driver.find_elements(By.XPATH, ".//div[contains(@class, 'x10l6tqk x13vifvy') or contains(@class, 'xz74otr x1gqwnh9 x1snlj24')]/img")
     image_urls = []
     for img in image_elements:
         image_urls.append(img.get_attribute('src'))
@@ -346,7 +412,6 @@ def get_post_links(driver, fanpage_url):
         Returns None if an error occurs.
     """
     post_urls = []
-    video_urls = []
     try:
         driver.get(fanpage_url)
         # Wait for the page to load
@@ -364,33 +429,27 @@ def get_post_links(driver, fanpage_url):
                 driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_DOWN)
                 sleep(0.5)  # Pause to allow content to load
 
+                # Locate the specific anchor tag and extract the href attribute
+                try:
+                    # Use a CSS selector to target the <a> element
+                    link_post_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='/posts/'], a[href*='/videos/'], a[href*='/reel/']")
+                    for link in link_post_elements:
+                        url = link.get_attribute("href")
+                        post_urls.append(url) if url not in post_urls else None
+
+                except Exception as e:
+                    # print("Error extracting link:", e)
+                    pass
+
             except Exception as e:
                 print("Error during scrolling:", e)
                 break
 
-
-        # Locate the specific anchor tag and extract the href attribute
-        try:
-            # Use a CSS selector to target the <a> element
-            link_post_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='/posts/']")
-            for link in link_post_elements:
-                url = link.get_attribute("href")
-                post_urls.append(url)
-
-            link_video_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='/videos/'], a[href*='/watch/']")
-            for link in link_video_elements:
-                url = link.get_attribute("href")
-                video_urls.append(url)
-
-        except Exception as e:
-            print("Error extracting link:", e)
-
         post_urls = remove_duplicate_links(post_urls)
-        video_urls = remove_duplicate_links(video_urls)
 
-        print("The number of posts:", len(post_urls) + len(video_urls))
+        print("The number of posts:", len(post_urls))
 
-        return post_urls, video_urls
+        return post_urls
 
     except TimeoutException:
         print("Timed out waiting for the page to load.")
@@ -427,7 +486,7 @@ def extract_facebook_post_id(url):
     Returns:
         The post ID, or None if no ID could be found.
     """
-    match = re.search(r"(?:posts/|videos/|pfbid)([\w\d]+)", url)
+    match = re.search(r"(?:reel/|posts/|videos/|pfbid)([\w\d]+)", url)
     if match:
         return match.group(1)
     return None
