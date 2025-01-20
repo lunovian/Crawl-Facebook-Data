@@ -4,4 +4,3 @@ requests
 keyboard
 tqdm
 colorama
-art

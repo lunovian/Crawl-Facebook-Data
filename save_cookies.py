@@ -1,38 +1,45 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pickle
 from time import sleep
-from config import EMAIL, PASSWORD
+from information import EMAIL, PASSWORD
 
-# Use the Service object to specify the path to chromedriver
+def get_chrome_options():
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument("--log-level=3")
+    return options
+
+# Use the Service object with options
 service = Service(executable_path="./chromedriver.exe")
-# or, for automatic finding of the driver :
-# service = Service()
+browser = webdriver.Chrome(service=service, options=get_chrome_options())
 
-# Pass the Service object to the webdriver
-browser = webdriver.Chrome(service=service)
-
-### Log in to Facebook
 # Open facebook website
 browser.get('https://www.facebook.com/')
 
-# Stop the program in 5 seconds
-sleep(5)
+# Wait for login elements to be present
+wait = WebDriverWait(browser, 10)
+email_field = wait.until(EC.presence_of_element_located((By.ID, "email")))
+password_field = wait.until(EC.presence_of_element_located((By.ID, "pass")))
 
-# Enter the login information
-user = browser.find_element(By.ID, "email")
-user.send_keys(EMAIL)
+# Enter login information
+email_field.send_keys(EMAIL)
+password_field.send_keys(PASSWORD)
 
-password = browser.find_element(By.ID, "pass")
-password.send_keys(PASSWORD)
-
-# Login
+# Click login and wait
 login_button = browser.find_element(By.NAME, "login")
 login_button.click()
 
-sleep(25)
+# Wait longer for login to complete
+sleep(10)
 
+# Save cookies
 pickle.dump(browser.get_cookies(), open("my_cookies.pkl", "wb"))
+print("Cookies saved successfully!")
 
 browser.close()

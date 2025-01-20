@@ -1,10 +1,55 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import sys
+import os
+
+# Add parent directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from information import EMAIL, PASSWORD
 import pickle
 import random
 from time import sleep
 from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
+
+def manual_login(browser):
+    """Perform manual login when cookies fail"""
+    try:
+        wait = WebDriverWait(browser, 10)
+        email_field = wait.until(EC.presence_of_element_located((By.ID, "email")))
+        password_field = wait.until(EC.presence_of_element_located((By.ID, "pass")))
+        
+        # Clear and fill credentials
+        email_field.clear()
+        email_field.send_keys(EMAIL)
+        password_field.clear()
+        password_field.send_keys(PASSWORD)
+        
+        # Find and click login button
+        login_button = browser.find_element(By.NAME, "login")
+        login_button.click()
+        
+        # Wait for login to complete
+        sleep(random.uniform(8, 10))
+        
+        # Save new cookies
+        pickle.dump(browser.get_cookies(), open("my_cookies.pkl", "wb"))
+        return True
+    except Exception as e:
+        print(f"Manual login failed: {str(e)}")
+        return False
+
+def is_logged_in(browser):
+    """Check if currently logged in"""
+    try:
+        wait = WebDriverWait(browser, 5)
+        wait.until(EC.presence_of_element_located((By.XPATH, "//div[@role='banner']")))
+        return True
+    except:
+        return False
 
 def login(driver_path, cookies_path):
     """
@@ -82,6 +127,13 @@ def login(driver_path, cookies_path):
     # Refresh with human-like delay
     browser.get('https://www.facebook.com/')
     sleep(random.uniform(2, 4))  # Shorter sleep after refresh
+
+    # After loading cookies, verify login status
+    if not is_logged_in(browser):
+        print("Cookie login failed, attempting manual login...")
+        if not manual_login(browser):
+            browser.quit()
+            return None
 
     return browser
 
@@ -167,5 +219,12 @@ def login_mobile(driver_path, cookies_path):
     # Refresh with human-like delay
     browser.get('https://m.facebook.com/') # Use the mobile version of Facebook
     sleep(random.uniform(2, 4))  # Shorter sleep after refresh
+
+    # After loading cookies, verify login status
+    if not is_logged_in(browser):
+        print("Cookie login failed, attempting manual login...")
+        if not manual_login(browser):
+            browser.quit()
+            return None
 
     return browser
