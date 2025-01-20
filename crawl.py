@@ -4,18 +4,34 @@ import os
 from tqdm import tqdm
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from colorama import init, Fore, Style
+from art import text2art
+init()
+
+def print_header(page_name):
+    header = text2art("FB Crawler", font='block')
+    print(Fore.CYAN + header + Style.RESET_ALL)
+    print(Fore.GREEN + f"Target Page: {page_name}" + Style.RESET_ALL)
+    print("=" * 50 + "\n")
 
 def crawl(driver, cookies_path, page_link, page_name):
+    print_header(page_name)
+    
+    print(Fore.YELLOW + "Initializing browsers..." + Style.RESET_ALL)
     browser = cf.login(driver, cookies_path)
     browser_mobile = cf.login_mobile(driver, cookies_path)
 
+    print(Fore.YELLOW + "Getting post URLs..." + Style.RESET_ALL)
     post_urls = cf.get_post_links(browser, page_link)
+    print(Fore.GREEN + f"Found {len(post_urls)} posts to process" + Style.RESET_ALL)
 
     if not os.path.exists(f"data/{page_name}"):
         os.makedirs(f"data/{page_name}")
 
-    # Process post URLs
-    for url in tqdm(post_urls, desc="Processing Posts"):
+    # Process post URLs with enhanced progress bar
+    for url in tqdm(post_urls, 
+                   desc=Fore.CYAN + "Processing Posts" + Style.RESET_ALL,
+                   bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.BLUE, Style.RESET_ALL)):
         id = cf.extract_facebook_post_id(url)
         folder = f"data/{page_name}/{id}"
         if not os.path.exists(folder):
@@ -120,16 +136,14 @@ def crawl(driver, cookies_path, page_link, page_name):
 if __name__ == "__main__":
     driver = "./chromedriver.exe"
     cookies_path = "my_cookies.pkl"
-
     page_link = "https://www.facebook.com/vinamilkofficial"
     page_name = "vinamilk"
 
-    # End timing the process
     start_time = time()
-
     crawl(driver, cookies_path, page_link, page_name)
-    # End timing the process
     end_time = time()
     elapsed_time = (end_time - start_time)/60
 
-    print(f"Processing completed in {elapsed_time:.2f} minutes.")
+    print(Fore.GREEN + "\n" + "=" * 50)
+    print(f"✨ Processing completed in {elapsed_time:.2f} minutes! ✨")
+    print("=" * 50 + Style.RESET_ALL)
