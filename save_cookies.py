@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import pickle
 from time import sleep
+from config import EMAIL, PASSWORD
 
 # Use the Service object to specify the path to chromedriver
 service = Service(executable_path="./chromedriver.exe")
@@ -21,10 +22,10 @@ sleep(5)
 
 # Enter the login information
 user = browser.find_element(By.ID, "email")
-user.send_keys("823579924940@1secmail.com") # enter your email
+user.send_keys(EMAIL)
 
 password = browser.find_element(By.ID, "pass")
-password.send_keys("swArAhb36") # enter your password
+password.send_keys(PASSWORD)
 
 # Login
 login_button = browser.find_element(By.NAME, "login")
