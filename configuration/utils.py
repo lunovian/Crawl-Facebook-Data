@@ -10,7 +10,28 @@ import requests
 from selenium.webdriver.common.keys import Keys
 import keyboard
 import re
+from random import uniform, choice
+import math
+from tqdm import tqdm
 
+__all__ = [
+    'get_post_links',
+    'get_captions_emojis',
+    'get_comments',
+    'get_image_urls',
+    'download_images',
+    'click_see_more',
+    'get_captions_spe',
+    'click_see_less',
+    'click_see_all',
+    'click_view_more_comments',
+    'get_video_urls',
+    'download_videos',
+    'get_captions_reel',
+    'click_comment_button',
+    'extract_facebook_post_id',
+    'save_text'
+]
 
 def show_all_comments(driver):
     '''Change Most relevant to All comments to show all comments'''
@@ -399,64 +420,141 @@ def download_videos(video_urls, download_dir="videos"):
         except requests.exceptions.RequestException as e:
             print(f"Error downloading video from {url}: {e}")
 
+def natural_scroll(driver, scroll_type="normal"):
+    """Enhanced natural scrolling with better coverage"""
+    viewport_height = driver.execute_script("return window.innerHeight")
+    scroll_height = driver.execute_script("return document.body.scrollHeight")
+    current_position = driver.execute_script("return window.pageYOffset")
+    
+    if scroll_type == "small":
+        scroll_distance = uniform(viewport_height * 0.3, viewport_height * 0.5)
+    else:
+        scroll_distance = uniform(viewport_height * 0.7, viewport_height * 0.9)
+    
+    new_position = min(current_position + scroll_distance, scroll_height - viewport_height)
+    
+    # Smooth scroll
+    steps = int(uniform(15, 25))
+    for i in range(steps):
+        step = easeInOutQuad(i / steps)
+        pos = current_position + (new_position - current_position) * step
+        driver.execute_script(f"window.scrollTo(0, {pos});")
+        sleep(uniform(0.01, 0.03))
+    
+    # Random pause
+    sleep(uniform(0.8, 1.5))
+    
+    # Check if reached bottom
+    final_position = driver.execute_script("return window.pageYOffset")
+    max_scroll = scroll_height - viewport_height
+    return final_position >= max_scroll * 0.98  # 98% of max scroll considered bottom
+
 def get_post_links(driver, fanpage_url):
-    """
-    Crawls a Facebook fanpage and extracts post links from a specific date until now.
-
-    Args:
-        driver: The Selenium WebDriver instance.
-        fanpage_url: The URL of the Facebook fanpage.
-
-    Returns:
-        A list of post URLs and a list of post contains videos URLs.
-        Returns None if an error occurs.
-    """
+    """Improved post link collection with better scrolling and verification"""
     post_urls = []
+    last_count = 0
+    no_new_count = 0
+    max_attempts = 30  # Increased maximum attempts
+    
     try:
+        # Navigate and wait for initial load
         driver.get(fanpage_url)
-        # Wait for the page to load
-        sleep(3)
-        # filter_year(driver, year)
+        sleep(uniform(3, 5))
+        
+        print("Collecting post URLs...")
+        pbar = tqdm(total=None, desc="Scrolling for posts")
         
         while True:
             try:
-                # Check if Enter is pressed
-                if keyboard.is_pressed("enter"):
-                    print("Stopping the scrolling.")
-                    break
-
-                # Scroll down
-                driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_DOWN)
-                sleep(0.5)  # Pause to allow content to load
-
-                # Locate the specific anchor tag and extract the href attribute
-                try:
-                    # Use a CSS selector to target the <a> element
-                    link_post_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='/posts/'], a[href*='/videos/'], a[href*='/reel/']")
-                    for link in link_post_elements:
+                # Find all post links with expanded selectors
+                links = driver.find_elements(
+                    By.CSS_SELECTOR,
+                    (
+                        "a[href*='/posts/'], "
+                        "a[href*='/photos/'], "
+                        "a[href*='/videos/'], "
+                        "a[href*='/reels/'], "
+                        "a[href*='story_fbid='], "
+                        "a[href*='?v='], "
+                        "a[href*='photo.php'], "
+                        "a[href*='video.php']"
+                    )
+                )
+                
+                # Process found links
+                current_count = len(post_urls)
+                for link in links:
+                    try:
                         url = link.get_attribute("href")
-                        post_urls.append(url) if url not in post_urls else None
-
-                except Exception as e:
-                    # print("Error extracting link:", e)
-                    pass
-
+                        if url and 'facebook.com' in url:
+                            # Clean URL
+                            base_url = url.split('?')[0]
+                            if base_url not in post_urls:
+                                post_urls.append(base_url)
+                    except:
+                        continue
+                
+                # Update progress
+                if len(post_urls) > current_count:
+                    pbar.update(len(post_urls) - current_count)
+                    no_new_count = 0
+                else:
+                    no_new_count += 1
+                
+                # Check for scroll end
+                if no_new_count >= max_attempts:
+                    print("\nNo new posts found after multiple attempts")
+                    break
+                
+                if keyboard.is_pressed('esc'):
+                    print("\nManual stop requested")
+                    break
+                
+                # Scroll with natural behavior
+                last_height = driver.execute_script("return document.body.scrollHeight")
+                scroll_amount = uniform(500, 1000)  # Random scroll amount
+                driver.execute_script(f"window.scrollBy(0, {scroll_amount});")
+                sleep(uniform(1, 2))
+                
+                # Check if reached bottom
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    no_new_count += 1
+                
             except Exception as e:
-                print("Error during scrolling:", e)
-                break
+                print(f"\nError during scrolling: {e}")
+                sleep(2)
+                continue
+        
+        pbar.close()
+        
+        # Clean and verify URLs
+        unique_urls = list(set(post_urls))  # Remove duplicates
+        print(f"\nFound {len(unique_urls)} unique posts")
+        
+        # Verify URLs
+        verified_urls = []
+        print("Verifying post URLs...")
+        for url in tqdm(unique_urls, desc="Verifying URLs"):
+            try:
+                driver.get(url)
+                sleep(uniform(0.5, 1))
+                if not any(x in driver.current_url for x in ['page_not_found', 'login', 'checkpoint']):
+                    verified_urls.append(url)
+            except:
+                continue
+        
+        print(f"Successfully verified {len(verified_urls)} posts")
+        return verified_urls
 
-        post_urls = remove_duplicate_links(post_urls)
-
-        print("The number of posts:", len(post_urls))
-
-        return post_urls
-
-    except TimeoutException:
-        print("Timed out waiting for the page to load.")
-        return None
     except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+        print(f"Error collecting posts: {e}")
+        return post_urls if post_urls else []
+
+# Add easing function for smooth scrolling
+def easeInOutQuad(t):
+    """Quadratic easing function for smooth scrolling"""
+    return t * t * (3 - 2 * t)
 
 def save_text(text_list, file_path):
     """

@@ -1,0 +1,14 @@
+[2025-01-21 15:57:37] ERROR: Failed to process generali
+[2025-01-21 15:57:39] SUCCESS: All pages processed in 13.36 minutes
+[2025-01-22 08:20:11] ERROR: Failed to process generali
+[2025-01-22 08:20:20] ERROR: An error occurred: No module named 'openpyxl'
+[2025-01-22 08:20:20] SUCCESS: All pages processed in 1.25 minutes
+[2025-01-22 08:23:50] ERROR: Failed to process generali
+[2025-01-22 08:23:58] SUCCESS: Reports generated successfully at: reports\facebook_crawler_report_20250122_082356.xlsx
+[2025-01-22 08:23:58] SUCCESS: All pages processed in 1.22 minutes
+[2025-01-22 12:44:36] SUCCESS: Completed hanwhalife
+[2025-01-22 12:44:42] SUCCESS: Reports generated successfully at: reports\facebook_crawler_report_20250122_124441.xlsx
+[2025-01-22 12:44:42] SUCCESS: All pages processed in 9.17 minutes
+[2025-01-22 13:57:27] ERROR: Failed to process hanwhalife
+[2025-01-22 13:57:34] SUCCESS: Reports generated successfully at: reports\facebook_crawler_report_20250122_135732.xlsx
+[2025-01-22 13:57:34] SUCCESS: All pages processed in 4.20 minutes

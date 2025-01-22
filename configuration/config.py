@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import sys
 import os
 
@@ -11,134 +12,289 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from information import EMAIL, PASSWORD
 import pickle
 import random
+from random import uniform
 from time import sleep
 from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
+from configuration.agents.user_agents import get_random_agent
 
-def manual_login(browser):
-    """Perform manual login when cookies fail"""
-    try:
-        wait = WebDriverWait(browser, 10)
-        email_field = wait.until(EC.presence_of_element_located((By.ID, "email")))
-        password_field = wait.until(EC.presence_of_element_located((By.ID, "pass")))
-        
-        # Clear and fill credentials
-        email_field.clear()
-        email_field.send_keys(EMAIL)
-        password_field.clear()
-        password_field.send_keys(PASSWORD)
-        
-        # Find and click login button
-        login_button = browser.find_element(By.NAME, "login")
-        login_button.click()
-        
-        # Wait for login to complete
-        sleep(random.uniform(8, 10))
-        
-        # Save new cookies
-        pickle.dump(browser.get_cookies(), open("my_cookies.pkl", "wb"))
-        return True
-    except Exception as e:
-        print(f"Manual login failed: {str(e)}")
-        return False
-
-def is_logged_in(browser):
-    """Check if currently logged in"""
-    try:
-        wait = WebDriverWait(browser, 5)
-        wait.until(EC.presence_of_element_located((By.XPATH, "//div[@role='banner']")))
-        return True
-    except:
-        return False
-
-def login(driver_path, cookies_path):
-    """
-    Logs into Facebook using saved cookies, with enhanced bot detection avoidance.
-
-    Args:
-        driver_path: Path to the chromedriver executable.
-        cookies_path: Path to the file containing saved cookies.
-
-    Returns:
-        A Selenium WebDriver instance logged into Facebook.
-    """
-
+def get_base_options(headless=False):
+    """Enhanced stealth options for Chrome with performance optimizations"""
     options = Options()
     
-    # Headless mode (comment out to run with visible browser)
-    # options.add_argument("--headless")
-
-    # Stealth options
-    options.add_argument("start-maximized")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # Performance optimizations
+    if headless:
+        options.add_argument('--headless=new')  # Only add headless if specified
+    
+    # GPU-specific fixes
+    options.add_argument('--disable-gpu-sandbox')
+    options.add_argument('--ignore-gpu-blocklist')
+    options.add_argument('--disable-gpu')  # Needed for Windows
+    options.add_argument('--disable-software-rasterizer')
+    
+    # Rest of your existing options
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-logging')
+    options.add_argument('--disable-in-process-stack-traces')
+    options.add_argument('--disable-crash-reporter')
+    options.add_argument('--disable-notifications')
+    options.add_argument('--disable-dev-tools')
+    options.add_argument('--disable-cache')
+    options.add_argument('--disable-application-cache')
+    options.add_argument('--disable-offline-load-stale-cache')
+    options.add_argument('--disk-cache-size=0')
+    options.add_argument('--disable-background-networking')
+    options.add_argument('--disable-sync')
+    options.add_argument('--disable-translate')
+    options.add_argument('--hide-scrollbars')
+    options.add_argument('--metrics-recording-only')
+    options.add_argument('--mute-audio')
+    options.add_argument('--no-first-run')
+    options.add_argument('--safebrowsing-disable-auto-update')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-ssl-errors')
+    options.add_argument('--pageLoadStrategy=none')  # Don't wait for full page load
+    
+    # Core stealth settings
+    options.add_experimental_option('excludeSwitches', ['enable-automation', 'enable-logging'])
     options.add_experimental_option('useAutomationExtension', False)
+    
+    # Additional stealth arguments
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_argument('--disable-web-security')
+    options.add_argument('--disable-site-isolation-trials')
+    options.add_argument('--disable-features=IsolateOrigins,site-per-process')
+    options.add_argument('--disable-popup-blocking')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-setuid-sandbox')
+    options.add_argument('--disable-infobars')
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--start-maximized')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--allow-running-insecure-content')
+    
+    # Random timezone
+    timezones = ['America/New_York', 'Europe/London', 'Asia/Tokyo']
+    options.add_argument(f'--timezone={random.choice(timezones)}')
+    
+    # Add common plugins to appear more human-like
+    options.add_argument('--enable-plugins')
+    
+    return options
 
-    # Disable certain features that can be used for detection
-    options.add_argument("--disable-blink-features=AutomationControlled")
-
-    # Random User-Agent
-    user_agents = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
-        # ... add more real user agents ...
-    ]
-    options.add_argument(f"user-agent={random.choice(user_agents)}")
-
-    # Use the Service object to specify the path to chromedriver
-    service = Service(executable_path=driver_path)
-
-    # Pass the Service object to the webdriver
-    browser = webdriver.Chrome(service=service, options=options)
-
-    # Apply selenium-stealth
+def apply_stealth(browser, mobile=False):
+    """Enhanced stealth configuration"""
+    vendor = "Apple Inc." if mobile else "Google Inc."
+    platform = "iPhone" if mobile else "Win32"
+    webgl = "Apple Inc." if mobile else "Intel Inc."
+    renderer = "Apple GPU" if mobile else "Intel Iris OpenGL Engine"
+    
     stealth(browser,
-            languages=["en-US", "en"],
-            vendor="Google Inc.",
-            platform="Win32",
-            webgl_vendor="Intel Inc.",
-            renderer="Intel Iris OpenGL Engine",
-            fix_hairline=True,
-            )
+        languages=["en-US", "en"],
+        vendor=vendor,
+        platform=platform,
+        webgl_vendor=webgl,
+        renderer=renderer,
+        fix_hairline=True,
+        run_on_insecure_origins=True,
+        
+        # Additional stealth parameters
+        enable_canvas_fp=True,           # Enable canvas fingerprint
+        enable_webgl_fp=True,           # Enable WebGL fingerprint
+        enable_audio_fp=True,           # Enable audio fingerprint
+        enable_media_codecs=True,       # Enable media codecs
+        enable_plugins_enumeration=True  # Enable plugins enumeration
+    )
+    
+    # Additional JavaScript evasions
+    browser.execute_script("""
+        Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+        Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});
+        window.chrome = { runtime: {} };
+    """)
 
-    # Open Facebook with initial sleep
-    browser.get('https://www.facebook.com/')
-    sleep(random.uniform(3, 5))  # Initial longer sleep
-
-    # Load cookies
+def manual_login(browser, mobile=False):
+    """Perform manual login when cookies fail"""
     try:
-        cookies = pickle.load(open(cookies_path, "rb"))
-        for cookie in cookies:
-            # Ensure the 'sameSite' attribute is set, or it will be ignored by Chrome
-            if 'sameSite' not in cookie:
-                cookie['sameSite'] = 'None' # You might need 'Strict' or 'Lax' depending on the website and cookie
-            if cookie.get('expiry', None) is not None:
-                cookie['expiry'] = int(cookie['expiry'])
-            browser.add_cookie(cookie)
-    except FileNotFoundError:
-        print(f"Error: Cookies file not found at {cookies_path}")
-        browser.quit()
-        return None
+        url = 'https://m.facebook.com/' if mobile else 'https://www.facebook.com/'
+        browser.get(url)
+        sleep(5)
+
+        wait = WebDriverWait(browser, 20)
+        
+        # Check if already logged in first
+        if is_logged_in(browser, mobile=mobile):
+            print("Already logged in!")
+            return True
+
+        # Clear and fill email
+        email_field = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='email']"))
+        )
+        email_field.clear()
+        email_field.send_keys(Keys.CONTROL + "a")  # Select all
+        email_field.send_keys(Keys.DELETE)  # Delete selection
+        sleep(1)
+        email_field.send_keys(EMAIL)
+        sleep(uniform(0.5, 1.5))
+
+        # Clear and fill password
+        password_field = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='pass']"))
+        )
+        password_field.clear()
+        password_field.send_keys(Keys.CONTROL + "a")
+        password_field.send_keys(Keys.DELETE)
+        sleep(1)
+        password_field.send_keys(PASSWORD)
+        sleep(uniform(0.5, 1.5))
+
+        # Click login with retry
+        for _ in range(3):
+            try:
+                login_button = wait.until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[name='login']"))
+                )
+                login_button.click()
+                break
+            except:
+                sleep(2)
+                continue
+
+        # Wait for login to complete with longer timeout
+        sleep(uniform(10, 15))
+
+        # Verify login success with multiple checks
+        if is_logged_in(browser, mobile=mobile):
+            print("Login successful!")
+            pickle.dump(browser.get_cookies(), open("my_cookies.pkl", "wb"))
+            return True
+            
+        print("Login verification failed")
+        return False
+            
     except Exception as e:
-        print(f"Error loading cookies: {e}")
-        browser.quit()
-        return None
+        print(f"Manual login failed with error: {str(e)}")
+        return False
 
-    # Refresh with human-like delay
-    browser.get('https://www.facebook.com/')
-    sleep(random.uniform(2, 4))  # Shorter sleep after refresh
+def is_logged_in(browser, mobile=False):
+    """Check if currently logged in using multiple selectors"""
+    try:
+        wait = WebDriverWait(browser, 10)
+        
+        if mobile:
+            # Mobile-specific selectors
+            mobile_selectors = [
+                "//div[@data-sigil='MTopBlueBarHeader']",
+                "//a[@aria-label='Facebook']",
+                "//div[@id='MRoot']",
+                "//div[contains(@class, '_7om2')]",  # Mobile header class
+                "//div[@role='banner']",
+                "//a[@href='/home.php']"
+            ]
+            for selector in mobile_selectors:
+                try:
+                    wait.until(EC.presence_of_element_located((By.XPATH, selector)))
+                    return True
+                except:
+                    continue
 
-    # After loading cookies, verify login status
-    if not is_logged_in(browser):
-        print("Cookie login failed, attempting manual login...")
-        if not manual_login(browser):
-            browser.quit()
-            return None
+            # Check mobile-specific URLs
+            current_url = browser.current_url
+            return any(x in current_url for x in ['m.facebook.com/home.php', 'm.facebook.com/?_rdr'])
+        else:
+            # Desktop selectors
+            desktop_selectors = [
+                "//div[@role='banner']",
+                "//div[@aria-label='Facebook']",
+                "//div[contains(@class, 'x1n2onr6')]//a[@aria-label='Facebook']",
+                "//div[contains(@class, 'x1lliihq')]",
+                "//input[@name='global_typeahead']"
+            ]
+            for selector in desktop_selectors:
+                try:
+                    wait.until(EC.presence_of_element_located((By.XPATH, selector)))
+                    return True
+                except:
+                    continue
 
+            # Check desktop URLs
+            current_url = browser.current_url
+            return "home.php" in current_url or "/?sk=h_chr" in current_url
+
+    except Exception as e:
+        print(f"Login check error: {str(e)}")
+        return False
+
+def optimize_wait_times(browser):
+    """Optimize page load timeouts"""
+    browser.set_page_load_timeout(30)
+    browser.implicitly_wait(5)
     return browser
 
+def login(driver_path, cookies_path, headless=False):
+    """Logs into Facebook using cookies or manual login"""
+    try:
+        options = get_base_options(headless=headless)
+        # Add desktop-specific options
+        options.add_argument("start-maximized")
+        options.add_argument("--disable-blink-features=AutomationControlled")
 
-def login_mobile(driver_path, cookies_path):
+        # Update: Use dynamic user agent
+        options.add_argument(f"user-agent={get_random_agent(mobile=False)}")
+
+        # Use the Service object to specify the path to chromedriver
+        service = Service(executable_path=driver_path)
+
+        # Pass the Service object to the webdriver
+        browser = webdriver.Chrome(service=service, options=options)
+        browser = optimize_wait_times(browser)
+        apply_stealth(browser, mobile=False)
+
+        if os.path.exists(cookies_path):
+            # Try cookie login first
+            browser.get('https://www.facebook.com/')
+            sleep(uniform(2, 3))
+
+            cookies = pickle.load(open(cookies_path, "rb"))
+            for cookie in cookies:
+                try:
+                    if 'sameSite' not in cookie:
+                        cookie['sameSite'] = 'None'
+                    if cookie.get('expiry', None) is not None:
+                        cookie['expiry'] = int(cookie['expiry'])
+                    browser.add_cookie(cookie)
+                except Exception as e:
+                    continue
+
+            browser.get('https://www.facebook.com/')
+            sleep(uniform(2, 3))
+
+            if is_logged_in(browser):
+                print("Successfully logged in with cookies!")
+                return browser
+            else:
+                print("Cookie login failed, trying manual login...")
+        else:
+            print("No cookies found, trying manual login...")
+
+        # If we get here, either no cookies or cookie login failed
+        if manual_login(browser):
+            return browser
+
+        # If all login attempts fail
+        browser.quit()
+        return None
+
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        if 'browser' in locals():
+            browser.quit()
+        return None
+
+def login_mobile(driver_path, cookies_path, headless=False):
     """
     Logs into Facebook using saved cookies, emulating a mobile device, 
     with enhanced bot detection avoidance.
@@ -146,85 +302,51 @@ def login_mobile(driver_path, cookies_path):
     Args:
         driver_path: Path to the chromedriver executable.
         cookies_path: Path to the file containing saved cookies.
-
-    Returns:
-        A Selenium WebDriver instance logged into Facebook, emulating a mobile device.
+        headless: Boolean to control headless mode
     """
-
-    mobile_emulation = {
-        "deviceName": "iPhone X"  # Or any other supported device
-    }
-
-    options = Options()
-    options.add_experimental_option("mobileEmulation", mobile_emulation)
-
-    # Headless mode (comment out to run with visible browser)
-    # options.add_argument("--headless")
-
-    # Stealth options - Important even when emulating a mobile device
-    options.add_argument("start-maximized") # Even in mobile emulation, maximizing can be helpful
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
-
-    # Disable certain features that can be used for detection
-    options.add_argument("--disable-blink-features=AutomationControlled")
-
-    # Random User-Agent (matching the emulated device)
-    user_agents = [
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", # iPhone
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1", # iPhone
-        # Add more user agents for iPhone X or other mobile devices you want to emulate
-    ]
-    options.add_argument(f"user-agent={random.choice(user_agents)}")
-
-    # Use the Service object to specify the path to chromedriver
-    service = Service(executable_path=driver_path)
-
-    # Pass the Service object to the webdriver
-    browser = webdriver.Chrome(service=service, options=options)
-
-    # Apply selenium-stealth
-    stealth(browser,
-            languages=["en-US", "en"],
-            vendor="Apple Inc.", # Match vendor to the emulated device
-            platform="iPhone",   # Match platform to the emulated device
-            webgl_vendor="Apple Inc.", # Or "Google Inc." if you emulate an Android
-            renderer="Apple GPU",       # Be sure to use appropriate WebGL renderer for your device
-            fix_hairline=True,
-            )
-
-    # Open Facebook with initial sleep
-    browser.get('https://m.facebook.com/') # Use the mobile version of Facebook
-    sleep(random.uniform(3, 5))  # Initial longer sleep
-
-    # Load cookies
     try:
-        cookies = pickle.load(open(cookies_path, "rb"))
-        for cookie in cookies:
-            # Ensure the 'sameSite' attribute is set correctly
-            if 'sameSite' not in cookie:
-                cookie['sameSite'] = 'None' # Or 'Strict', 'Lax'
-            if cookie.get('expiry', None) is not None:
-                cookie['expiry'] = int(cookie['expiry'])
-            browser.add_cookie(cookie)
-    except FileNotFoundError:
-        print(f"Error: Cookies file not found at {cookies_path}")
+        options = get_base_options(headless=headless)
+        options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone X"})
+        options.add_argument(f"user-agent={get_random_agent(mobile=True)}")
+
+        service = Service(executable_path=driver_path)
+        browser = webdriver.Chrome(service=service, options=options)
+        apply_stealth(browser, mobile=True)
+
+        if os.path.exists(cookies_path):
+            browser.get('https://m.facebook.com/')
+            sleep(uniform(2, 3))
+
+            cookies = pickle.load(open(cookies_path, "rb"))
+            for cookie in cookies:
+                try:
+                    if 'sameSite' not in cookie:
+                        cookie['sameSite'] = 'None'
+                    if cookie.get('expiry', None) is not None:
+                        cookie['expiry'] = int(cookie['expiry'])
+                    browser.add_cookie(cookie)
+                except Exception as e:
+                    continue
+
+            browser.get('https://m.facebook.com/')
+            sleep(uniform(2, 3))
+
+            if is_logged_in(browser, mobile=True):  # Pass mobile=True here
+                print("Successfully logged in mobile with cookies!")
+                return browser
+            else:
+                print("Mobile cookie login failed, trying manual login...")
+        else:
+            print("No cookies found, trying manual mobile login...")
+
+        if manual_login(browser, mobile=True):
+            return browser
+
         browser.quit()
         return None
+
     except Exception as e:
-        print(f"Error loading cookies: {e}")
-        browser.quit()
-        return None
-
-    # Refresh with human-like delay
-    browser.get('https://m.facebook.com/') # Use the mobile version of Facebook
-    sleep(random.uniform(2, 4))  # Shorter sleep after refresh
-
-    # After loading cookies, verify login status
-    if not is_logged_in(browser):
-        print("Cookie login failed, attempting manual login...")
-        if not manual_login(browser):
+        print(f"Mobile login error: {str(e)}")
+        if 'browser' in locals():
             browser.quit()
-            return None
-
-    return browser
+        return None

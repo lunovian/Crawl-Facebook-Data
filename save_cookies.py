@@ -5,15 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pickle
 from time import sleep
+from configuration.config import get_chrome_options  # Updated import
 from information import EMAIL, PASSWORD
-
-def get_chrome_options():
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    options.add_argument('--disable-gpu')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument("--log-level=3")
-    return options
 
 # Use the Service object with options
 service = Service(executable_path="./chromedriver.exe")

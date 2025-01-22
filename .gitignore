@@ -1,5 +1,7 @@
-// ...existing code...
 information.py
 /configuration/__pycache__
 /__pycache__
 *.pkl
+/data
+*.pyc
+/reports
