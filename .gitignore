@@ -5,3 +5,4 @@ information.py
 /data
 *.pyc
 /reports
+/logs

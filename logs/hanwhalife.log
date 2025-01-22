@@ -476,3 +476,471 @@ Stacktrace:
 [2025-01-22 16:10:08] INFO: 💬 Comments: 473
 [2025-01-22 16:10:08] INFO: ❌ Failed: 1
 [2025-01-22 16:10:08] INFO: Processing video 43/235
+[2025-01-22 16:11:11] INFO: Processing video 44/235
+[2025-01-22 16:12:30] INFO: Processing video 45/235
+[2025-01-22 16:13:27] INFO: Processing post 44/235
+[2025-01-22 16:14:30] INFO: Statistics for hanwhalife:
+[2025-01-22 16:14:30] INFO: 📝 Posts: 44
+[2025-01-22 16:14:30] INFO: 🎥 Videos: 45
+[2025-01-22 16:14:30] INFO: 📱 Reels: 0
+[2025-01-22 16:14:30] INFO: 🖼️ Images: 113
+[2025-01-22 16:14:30] INFO: 💬 Comments: 477
+[2025-01-22 16:14:30] INFO: ❌ Failed: 1
+[2025-01-22 16:14:30] INFO: Processing post 45/235
+[2025-01-22 16:15:49] INFO: Statistics for hanwhalife:
+[2025-01-22 16:15:49] INFO: 📝 Posts: 45
+[2025-01-22 16:15:49] INFO: 🎥 Videos: 45
+[2025-01-22 16:15:49] INFO: 📱 Reels: 0
+[2025-01-22 16:15:49] INFO: 🖼️ Images: 118
+[2025-01-22 16:15:49] INFO: 💬 Comments: 481
+[2025-01-22 16:15:49] INFO: ❌ Failed: 1
+[2025-01-22 16:15:49] INFO: Processing post 46/235
+[2025-01-22 16:16:20] WARNING: Failed to process https://www.facebook.com/hanwhalifevn/posts/pfbid08w4AbzW21PCuWqLKihWcfScPgKQSeHVXGsXoZb2pRmgHNbMwgZWpHAizhEowTc7Yl: Message: timeout: Timed out receiving message from renderer: 29.417
+  (Session info: chrome=132.0.6834.83)
+Stacktrace:
+	GetHandleVerifier [0x00007FF66B1DFB05+28789]
+	(No symbol) [0x00007FF66B1486E0]
+	(No symbol) [0x00007FF66AFE592A]
+	(No symbol) [0x00007FF66AFD3992]
+	(No symbol) [0x00007FF66AFD365A]
+	(No symbol) [0x00007FF66AFD1274]
+	(No symbol) [0x00007FF66AFD1D1F]
+	(No symbol) [0x00007FF66AFE09EE]
+	(No symbol) [0x00007FF66AFF4AAD]
+	(No symbol) [0x00007FF66AFFB27A]
+	(No symbol) [0x00007FF66AFD2484]
+	(No symbol) [0x00007FF66AFF48D3]
+	(No symbol) [0x00007FF66B07F99B]
+	(No symbol) [0x00007FF66B05F1E3]
+	(No symbol) [0x00007FF66B02A938]
+	(No symbol) [0x00007FF66B02BAA1]
+	GetHandleVerifier [0x00007FF66B51933D+3410093]
+	GetHandleVerifier [0x00007FF66B52E7DD+3497293]
+	GetHandleVerifier [0x00007FF66B522A73+3448803]
+	GetHandleVerifier [0x00007FF66B2A7BBB+848171]
+	(No symbol) [0x00007FF66B153C3F]
+	(No symbol) [0x00007FF66B14F6E4]
+	(No symbol) [0x00007FF66B14F87D]
+	(No symbol) [0x00007FF66B13ED49]
+	BaseThreadInitThunk [0x00007FFD49FFE8D7+23]
+	RtlUserThreadStart [0x00007FFD4A31FBCC+44]
+
+[2025-01-22 16:16:20] INFO: Processing post 47/235
+[2025-01-22 16:16:50] WARNING: Failed to process https://www.facebook.com/hanwhalifevn/posts/pfbid02nSQjnUXYvyhurew44qA2iycDdncZHczVsGVDsqDX6kodGWzvmDT3AjkRbjz7KrhFl: Message: timeout: Timed out receiving message from renderer: 0.589
+  (Session info: chrome=132.0.6834.83)
+Stacktrace:
+	GetHandleVerifier [0x00007FF66B1DFB05+28789]
+	(No symbol) [0x00007FF66B1486E0]
+	(No symbol) [0x00007FF66AFE592A]
+	(No symbol) [0x00007FF66AFD3992]
+	(No symbol) [0x00007FF66AFD365A]
+	(No symbol) [0x00007FF66AFD1274]
+	(No symbol) [0x00007FF66AFD1D1F]
+	(No symbol) [0x00007FF66AFE09EE]
+	(No symbol) [0x00007FF66AFF4AAD]
+	(No symbol) [0x00007FF66AFFB27A]
+	(No symbol) [0x00007FF66AFD2484]
+	(No symbol) [0x00007FF66AFF48D3]
+	(No symbol) [0x00007FF66B07F99B]
+	(No symbol) [0x00007FF66B05F1E3]
+	(No symbol) [0x00007FF66B02A938]
+	(No symbol) [0x00007FF66B02BAA1]
+	GetHandleVerifier [0x00007FF66B51933D+3410093]
+	GetHandleVerifier [0x00007FF66B52E7DD+3497293]
+	GetHandleVerifier [0x00007FF66B522A73+3448803]
+	GetHandleVerifier [0x00007FF66B2A7BBB+848171]
+	(No symbol) [0x00007FF66B153C3F]
+	(No symbol) [0x00007FF66B14F6E4]
+	(No symbol) [0x00007FF66B14F87D]
+	(No symbol) [0x00007FF66B13ED49]
+	BaseThreadInitThunk [0x00007FFD49FFE8D7+23]
+	RtlUserThreadStart [0x00007FFD4A31FBCC+44]
+
+[2025-01-22 16:16:50] INFO: Processing post 48/235
+[2025-01-22 16:17:28] INFO: Statistics for hanwhalife:
+[2025-01-22 16:17:28] INFO: 📝 Posts: 48
+[2025-01-22 16:17:28] INFO: 🎥 Videos: 45
+[2025-01-22 16:17:28] INFO: 📱 Reels: 0
+[2025-01-22 16:17:28] INFO: 🖼️ Images: 120
+[2025-01-22 16:17:28] INFO: 💬 Comments: 483
+[2025-01-22 16:17:28] INFO: ❌ Failed: 3
+[2025-01-22 16:17:28] INFO: Processing video 46/235
+[2025-01-22 16:18:47] INFO: Processing video 47/235
+[2025-01-22 16:19:48] INFO: Processing video 48/235
+[2025-01-22 16:20:52] INFO: Processing video 49/235
+[2025-01-22 16:22:08] INFO: Processing video 50/235
+[2025-01-22 16:23:10] INFO: Processing post 49/235
+[2025-01-22 16:23:40] WARNING: Failed to process https://www.facebook.com/hanwhalifevn/posts/pfbid0rtUWFqWFwR8o294rvvskvxXVSNSA1nMxuzSoyTeTkY8nirrkAWK4Xt5K1WJMLn33l: Message: timeout: Timed out receiving message from renderer: 29.478
+  (Session info: chrome=132.0.6834.83)
+Stacktrace:
+	GetHandleVerifier [0x00007FF66B1DFB05+28789]
+	(No symbol) [0x00007FF66B1486E0]
+	(No symbol) [0x00007FF66AFE592A]
+	(No symbol) [0x00007FF66AFD3992]
+	(No symbol) [0x00007FF66AFD365A]
+	(No symbol) [0x00007FF66AFD1274]
+	(No symbol) [0x00007FF66AFD1D1F]
+	(No symbol) [0x00007FF66AFE09EE]
+	(No symbol) [0x00007FF66AFF4AAD]
+	(No symbol) [0x00007FF66AFFB27A]
+	(No symbol) [0x00007FF66AFD2484]
+	(No symbol) [0x00007FF66AFF48D3]
+	(No symbol) [0x00007FF66B07F99B]
+	(No symbol) [0x00007FF66B05F1E3]
+	(No symbol) [0x00007FF66B02A938]
+	(No symbol) [0x00007FF66B02BAA1]
+	GetHandleVerifier [0x00007FF66B51933D+3410093]
+	GetHandleVerifier [0x00007FF66B52E7DD+3497293]
+	GetHandleVerifier [0x00007FF66B522A73+3448803]
+	GetHandleVerifier [0x00007FF66B2A7BBB+848171]
+	(No symbol) [0x00007FF66B153C3F]
+	(No symbol) [0x00007FF66B14F6E4]
+	(No symbol) [0x00007FF66B14F87D]
+	(No symbol) [0x00007FF66B13ED49]
+	BaseThreadInitThunk [0x00007FFD49FFE8D7+23]
+	RtlUserThreadStart [0x00007FFD4A31FBCC+44]
+
+[2025-01-22 16:23:40] INFO: Processing post 50/235
+[2025-01-22 16:24:22] INFO: Statistics for hanwhalife:
+[2025-01-22 16:24:22] INFO: 📝 Posts: 50
+[2025-01-22 16:24:22] INFO: 🎥 Videos: 50
+[2025-01-22 16:24:22] INFO: 📱 Reels: 0
+[2025-01-22 16:24:22] INFO: 🖼️ Images: 122
+[2025-01-22 16:24:22] INFO: 💬 Comments: 488
+[2025-01-22 16:24:22] INFO: ❌ Failed: 4
+[2025-01-22 16:24:22] INFO: Processing post 51/235
+[2025-01-22 16:25:23] INFO: Statistics for hanwhalife:
+[2025-01-22 16:25:23] INFO: 📝 Posts: 51
+[2025-01-22 16:25:23] INFO: 🎥 Videos: 50
+[2025-01-22 16:25:23] INFO: 📱 Reels: 0
+[2025-01-22 16:25:23] INFO: 🖼️ Images: 127
+[2025-01-22 16:25:23] INFO: 💬 Comments: 491
+[2025-01-22 16:25:23] INFO: ❌ Failed: 4
+[2025-01-22 16:25:23] INFO: Processing post 52/235
+[2025-01-22 16:26:10] INFO: Statistics for hanwhalife:
+[2025-01-22 16:26:10] INFO: 📝 Posts: 52
+[2025-01-22 16:26:10] INFO: 🎥 Videos: 50
+[2025-01-22 16:26:10] INFO: 📱 Reels: 0
+[2025-01-22 16:26:10] INFO: 🖼️ Images: 129
+[2025-01-22 16:26:10] INFO: 💬 Comments: 523
+[2025-01-22 16:26:10] INFO: ❌ Failed: 4
+[2025-01-22 16:26:10] INFO: Processing post 53/235
+[2025-01-22 16:26:29] INFO: Statistics for hanwhalife:
+[2025-01-22 16:26:29] INFO: 📝 Posts: 53
+[2025-01-22 16:26:29] INFO: 🎥 Videos: 50
+[2025-01-22 16:26:29] INFO: 📱 Reels: 0
+[2025-01-22 16:26:29] INFO: 🖼️ Images: 131
+[2025-01-22 16:26:29] INFO: 💬 Comments: 527
+[2025-01-22 16:26:29] INFO: ❌ Failed: 4
+[2025-01-22 16:26:29] INFO: Processing post 54/235
+[2025-01-22 16:26:52] INFO: Statistics for hanwhalife:
+[2025-01-22 16:26:52] INFO: 📝 Posts: 54
+[2025-01-22 16:26:52] INFO: 🎥 Videos: 50
+[2025-01-22 16:26:52] INFO: 📱 Reels: 0
+[2025-01-22 16:26:52] INFO: 🖼️ Images: 133
+[2025-01-22 16:26:52] INFO: 💬 Comments: 532
+[2025-01-22 16:26:52] INFO: ❌ Failed: 4
+[2025-01-22 16:26:52] INFO: Processing post 55/235
+[2025-01-22 16:27:10] INFO: Statistics for hanwhalife:
+[2025-01-22 16:27:10] INFO: 📝 Posts: 55
+[2025-01-22 16:27:10] INFO: 🎥 Videos: 50
+[2025-01-22 16:27:10] INFO: 📱 Reels: 0
+[2025-01-22 16:27:10] INFO: 🖼️ Images: 135
+[2025-01-22 16:27:10] INFO: 💬 Comments: 535
+[2025-01-22 16:27:10] INFO: ❌ Failed: 4
+[2025-01-22 16:27:10] INFO: Processing video 51/235
+[2025-01-22 16:28:08] INFO: Processing post 56/235
+[2025-01-22 16:29:44] INFO: Statistics for hanwhalife:
+[2025-01-22 16:29:44] INFO: 📝 Posts: 56
+[2025-01-22 16:29:44] INFO: 🎥 Videos: 51
+[2025-01-22 16:29:44] INFO: 📱 Reels: 0
+[2025-01-22 16:29:44] INFO: 🖼️ Images: 141
+[2025-01-22 16:29:44] INFO: 💬 Comments: 542
+[2025-01-22 16:29:44] INFO: ❌ Failed: 4
+[2025-01-22 16:29:44] INFO: Processing post 57/235
+[2025-01-22 16:30:03] INFO: Statistics for hanwhalife:
+[2025-01-22 16:30:03] INFO: 📝 Posts: 57
+[2025-01-22 16:30:03] INFO: 🎥 Videos: 51
+[2025-01-22 16:30:03] INFO: 📱 Reels: 0
+[2025-01-22 16:30:03] INFO: 🖼️ Images: 147
+[2025-01-22 16:30:03] INFO: 💬 Comments: 550
+[2025-01-22 16:30:03] INFO: ❌ Failed: 4
+[2025-01-22 16:30:03] INFO: Processing post 58/235
+[2025-01-22 16:30:26] INFO: Statistics for hanwhalife:
+[2025-01-22 16:30:26] INFO: 📝 Posts: 58
+[2025-01-22 16:30:26] INFO: 🎥 Videos: 51
+[2025-01-22 16:30:26] INFO: 📱 Reels: 0
+[2025-01-22 16:30:26] INFO: 🖼️ Images: 149
+[2025-01-22 16:30:26] INFO: 💬 Comments: 552
+[2025-01-22 16:30:26] INFO: ❌ Failed: 4
+[2025-01-22 16:30:26] INFO: Processing post 59/235
+[2025-01-22 16:30:59] INFO: Statistics for hanwhalife:
+[2025-01-22 16:30:59] INFO: 📝 Posts: 59
+[2025-01-22 16:30:59] INFO: 🎥 Videos: 51
+[2025-01-22 16:30:59] INFO: 📱 Reels: 0
+[2025-01-22 16:30:59] INFO: 🖼️ Images: 151
+[2025-01-22 16:30:59] INFO: 💬 Comments: 555
+[2025-01-22 16:30:59] INFO: ❌ Failed: 4
+[2025-01-22 16:30:59] INFO: Processing video 52/235
+[2025-01-22 16:32:05] INFO: Processing video 53/235
+[2025-01-22 16:32:50] INFO: Processing video 54/235
+[2025-01-22 16:33:49] INFO: Processing post 60/235
+[2025-01-22 16:34:08] INFO: Statistics for hanwhalife:
+[2025-01-22 16:34:08] INFO: 📝 Posts: 60
+[2025-01-22 16:34:08] INFO: 🎥 Videos: 54
+[2025-01-22 16:34:08] INFO: 📱 Reels: 0
+[2025-01-22 16:34:08] INFO: 🖼️ Images: 156
+[2025-01-22 16:34:08] INFO: 💬 Comments: 556
+[2025-01-22 16:34:08] INFO: ❌ Failed: 4
+[2025-01-22 16:34:08] INFO: Processing video 55/235
+[2025-01-22 16:34:53] INFO: Processing post 61/235
+[2025-01-22 16:35:23] INFO: Statistics for hanwhalife:
+[2025-01-22 16:35:23] INFO: 📝 Posts: 61
+[2025-01-22 16:35:23] INFO: 🎥 Videos: 55
+[2025-01-22 16:35:23] INFO: 📱 Reels: 0
+[2025-01-22 16:35:23] INFO: 🖼️ Images: 158
+[2025-01-22 16:35:23] INFO: 💬 Comments: 598
+[2025-01-22 16:35:23] INFO: ❌ Failed: 4
+[2025-01-22 16:35:23] INFO: Processing video 56/235
+[2025-01-22 16:36:19] INFO: Processing post 62/235
+[2025-01-22 16:36:37] INFO: Statistics for hanwhalife:
+[2025-01-22 16:36:37] INFO: 📝 Posts: 62
+[2025-01-22 16:36:37] INFO: 🎥 Videos: 56
+[2025-01-22 16:36:37] INFO: 📱 Reels: 0
+[2025-01-22 16:36:37] INFO: 🖼️ Images: 160
+[2025-01-22 16:36:37] INFO: 💬 Comments: 598
+[2025-01-22 16:36:37] INFO: ❌ Failed: 4
+[2025-01-22 16:36:37] INFO: Processing video 57/235
+[2025-01-22 16:37:33] INFO: Processing post 63/235
+[2025-01-22 16:38:27] INFO: Statistics for hanwhalife:
+[2025-01-22 16:38:27] INFO: 📝 Posts: 63
+[2025-01-22 16:38:27] INFO: 🎥 Videos: 57
+[2025-01-22 16:38:27] INFO: 📱 Reels: 0
+[2025-01-22 16:38:27] INFO: 🖼️ Images: 163
+[2025-01-22 16:38:27] INFO: 💬 Comments: 721
+[2025-01-22 16:38:27] INFO: ❌ Failed: 4
+[2025-01-22 16:38:27] INFO: Processing video 58/235
+[2025-01-22 16:39:12] INFO: Processing post 64/235
+[2025-01-22 16:39:33] INFO: Statistics for hanwhalife:
+[2025-01-22 16:39:33] INFO: 📝 Posts: 64
+[2025-01-22 16:39:33] INFO: 🎥 Videos: 58
+[2025-01-22 16:39:33] INFO: 📱 Reels: 0
+[2025-01-22 16:39:33] INFO: 🖼️ Images: 165
+[2025-01-22 16:39:33] INFO: 💬 Comments: 723
+[2025-01-22 16:39:33] INFO: ❌ Failed: 4
+[2025-01-22 16:39:33] INFO: Processing post 65/235
+[2025-01-22 16:39:52] INFO: Statistics for hanwhalife:
+[2025-01-22 16:39:52] INFO: 📝 Posts: 65
+[2025-01-22 16:39:52] INFO: 🎥 Videos: 58
+[2025-01-22 16:39:52] INFO: 📱 Reels: 0
+[2025-01-22 16:39:52] INFO: 🖼️ Images: 167
+[2025-01-22 16:39:52] INFO: 💬 Comments: 723
+[2025-01-22 16:39:52] INFO: ❌ Failed: 4
+[2025-01-22 16:39:52] INFO: Processing post 66/235
+[2025-01-22 16:40:09] INFO: Statistics for hanwhalife:
+[2025-01-22 16:40:09] INFO: 📝 Posts: 66
+[2025-01-22 16:40:09] INFO: 🎥 Videos: 58
+[2025-01-22 16:40:09] INFO: 📱 Reels: 0
+[2025-01-22 16:40:09] INFO: 🖼️ Images: 169
+[2025-01-22 16:40:09] INFO: 💬 Comments: 725
+[2025-01-22 16:40:09] INFO: ❌ Failed: 4
+[2025-01-22 16:40:09] INFO: Processing video 59/235
+[2025-01-22 16:41:15] INFO: Processing video 60/235
+[2025-01-22 16:42:01] INFO: Processing post 67/235
+[2025-01-22 16:42:34] INFO: Statistics for hanwhalife:
+[2025-01-22 16:42:34] INFO: 📝 Posts: 67
+[2025-01-22 16:42:34] INFO: 🎥 Videos: 60
+[2025-01-22 16:42:34] INFO: 📱 Reels: 0
+[2025-01-22 16:42:34] INFO: 🖼️ Images: 171
+[2025-01-22 16:42:34] INFO: 💬 Comments: 728
+[2025-01-22 16:42:34] INFO: ❌ Failed: 4
+[2025-01-22 16:42:34] INFO: Processing post 68/235
+[2025-01-22 16:43:06] INFO: Statistics for hanwhalife:
+[2025-01-22 16:43:06] INFO: 📝 Posts: 68
+[2025-01-22 16:43:06] INFO: 🎥 Videos: 60
+[2025-01-22 16:43:06] INFO: 📱 Reels: 0
+[2025-01-22 16:43:06] INFO: 🖼️ Images: 173
+[2025-01-22 16:43:06] INFO: 💬 Comments: 729
+[2025-01-22 16:43:06] INFO: ❌ Failed: 4
+[2025-01-22 16:43:06] INFO: Processing video 61/235
+[2025-01-22 16:44:06] INFO: Processing post 69/235
+[2025-01-22 16:44:25] INFO: Statistics for hanwhalife:
+[2025-01-22 16:44:25] INFO: 📝 Posts: 69
+[2025-01-22 16:44:25] INFO: 🎥 Videos: 61
+[2025-01-22 16:44:25] INFO: 📱 Reels: 0
+[2025-01-22 16:44:25] INFO: 🖼️ Images: 179
+[2025-01-22 16:44:25] INFO: 💬 Comments: 730
+[2025-01-22 16:44:25] INFO: ❌ Failed: 4
+[2025-01-22 16:44:25] INFO: Processing post 70/235
+[2025-01-22 16:44:43] INFO: Statistics for hanwhalife:
+[2025-01-22 16:44:43] INFO: 📝 Posts: 70
+[2025-01-22 16:44:43] INFO: 🎥 Videos: 61
+[2025-01-22 16:44:43] INFO: 📱 Reels: 0
+[2025-01-22 16:44:43] INFO: 🖼️ Images: 181
+[2025-01-22 16:44:43] INFO: 💬 Comments: 730
+[2025-01-22 16:44:43] INFO: ❌ Failed: 4
+[2025-01-22 16:44:43] INFO: Processing post 71/235
+[2025-01-22 16:45:01] INFO: Statistics for hanwhalife:
+[2025-01-22 16:45:01] INFO: 📝 Posts: 71
+[2025-01-22 16:45:01] INFO: 🎥 Videos: 61
+[2025-01-22 16:45:01] INFO: 📱 Reels: 0
+[2025-01-22 16:45:01] INFO: 🖼️ Images: 183
+[2025-01-22 16:45:01] INFO: 💬 Comments: 731
+[2025-01-22 16:45:01] INFO: ❌ Failed: 4
+[2025-01-22 16:45:01] INFO: Processing post 72/235
+[2025-01-22 16:45:19] INFO: Statistics for hanwhalife:
+[2025-01-22 16:45:19] INFO: 📝 Posts: 72
+[2025-01-22 16:45:19] INFO: 🎥 Videos: 61
+[2025-01-22 16:45:19] INFO: 📱 Reels: 0
+[2025-01-22 16:45:19] INFO: 🖼️ Images: 185
+[2025-01-22 16:45:19] INFO: 💬 Comments: 732
+[2025-01-22 16:45:19] INFO: ❌ Failed: 4
+[2025-01-22 16:45:19] INFO: Processing post 73/235
+[2025-01-22 16:45:47] INFO: Statistics for hanwhalife:
+[2025-01-22 16:45:47] INFO: 📝 Posts: 73
+[2025-01-22 16:45:47] INFO: 🎥 Videos: 61
+[2025-01-22 16:45:47] INFO: 📱 Reels: 0
+[2025-01-22 16:45:47] INFO: 🖼️ Images: 190
+[2025-01-22 16:45:47] INFO: 💬 Comments: 733
+[2025-01-22 16:45:47] INFO: ❌ Failed: 4
+[2025-01-22 16:45:47] INFO: Processing post 74/235
+[2025-01-22 16:47:12] INFO: Statistics for hanwhalife:
+[2025-01-22 16:47:12] INFO: 📝 Posts: 74
+[2025-01-22 16:47:12] INFO: 🎥 Videos: 61
+[2025-01-22 16:47:12] INFO: 📱 Reels: 0
+[2025-01-22 16:47:12] INFO: 🖼️ Images: 192
+[2025-01-22 16:47:12] INFO: 💬 Comments: 1004
+[2025-01-22 16:47:12] INFO: ❌ Failed: 4
+[2025-01-22 16:47:12] INFO: Processing post 75/235
+[2025-01-22 16:48:02] INFO: Statistics for hanwhalife:
+[2025-01-22 16:48:02] INFO: 📝 Posts: 75
+[2025-01-22 16:48:02] INFO: 🎥 Videos: 61
+[2025-01-22 16:48:02] INFO: 📱 Reels: 0
+[2025-01-22 16:48:02] INFO: 🖼️ Images: 194
+[2025-01-22 16:48:02] INFO: 💬 Comments: 1180
+[2025-01-22 16:48:02] INFO: ❌ Failed: 4
+[2025-01-22 16:48:02] INFO: Processing post 76/235
+[2025-01-22 16:48:21] INFO: Statistics for hanwhalife:
+[2025-01-22 16:48:21] INFO: 📝 Posts: 76
+[2025-01-22 16:48:21] INFO: 🎥 Videos: 61
+[2025-01-22 16:48:21] INFO: 📱 Reels: 0
+[2025-01-22 16:48:21] INFO: 🖼️ Images: 199
+[2025-01-22 16:48:21] INFO: 💬 Comments: 1181
+[2025-01-22 16:48:21] INFO: ❌ Failed: 4
+[2025-01-22 16:48:21] INFO: Processing post 77/235
+[2025-01-22 16:49:41] INFO: Statistics for hanwhalife:
+[2025-01-22 16:49:41] INFO: 📝 Posts: 77
+[2025-01-22 16:49:41] INFO: 🎥 Videos: 61
+[2025-01-22 16:49:41] INFO: 📱 Reels: 0
+[2025-01-22 16:49:41] INFO: 🖼️ Images: 201
+[2025-01-22 16:49:41] INFO: 💬 Comments: 1299
+[2025-01-22 16:49:41] INFO: ❌ Failed: 4
+[2025-01-22 16:49:41] INFO: Processing post 78/235
+[2025-01-22 16:50:22] INFO: Statistics for hanwhalife:
+[2025-01-22 16:50:22] INFO: 📝 Posts: 78
+[2025-01-22 16:50:22] INFO: 🎥 Videos: 61
+[2025-01-22 16:50:22] INFO: 📱 Reels: 0
+[2025-01-22 16:50:22] INFO: 🖼️ Images: 203
+[2025-01-22 16:50:22] INFO: 💬 Comments: 1334
+[2025-01-22 16:50:22] INFO: ❌ Failed: 4
+[2025-01-22 16:50:22] INFO: Processing post 79/235
+[2025-01-22 16:50:46] INFO: Statistics for hanwhalife:
+[2025-01-22 16:50:46] INFO: 📝 Posts: 79
+[2025-01-22 16:50:46] INFO: 🎥 Videos: 61
+[2025-01-22 16:50:46] INFO: 📱 Reels: 0
+[2025-01-22 16:50:46] INFO: 🖼️ Images: 205
+[2025-01-22 16:50:46] INFO: 💬 Comments: 1337
+[2025-01-22 16:50:46] INFO: ❌ Failed: 4
+[2025-01-22 16:50:46] INFO: Processing post 80/235
+[2025-01-22 16:51:04] INFO: Statistics for hanwhalife:
+[2025-01-22 16:51:04] INFO: 📝 Posts: 80
+[2025-01-22 16:51:04] INFO: 🎥 Videos: 61
+[2025-01-22 16:51:04] INFO: 📱 Reels: 0
+[2025-01-22 16:51:04] INFO: 🖼️ Images: 207
+[2025-01-22 16:51:04] INFO: 💬 Comments: 1338
+[2025-01-22 16:51:04] INFO: ❌ Failed: 4
+[2025-01-22 16:51:04] INFO: Processing video 62/235
+[2025-01-22 16:52:05] INFO: Processing post 81/235
+[2025-01-22 16:52:23] INFO: Statistics for hanwhalife:
+[2025-01-22 16:52:23] INFO: 📝 Posts: 81
+[2025-01-22 16:52:23] INFO: 🎥 Videos: 62
+[2025-01-22 16:52:23] INFO: 📱 Reels: 0
+[2025-01-22 16:52:23] INFO: 🖼️ Images: 209
+[2025-01-22 16:52:23] INFO: 💬 Comments: 1339
+[2025-01-22 16:52:23] INFO: ❌ Failed: 4
+[2025-01-22 16:52:23] INFO: Processing post 82/235
+[2025-01-22 16:52:43] INFO: Statistics for hanwhalife:
+[2025-01-22 16:52:43] INFO: 📝 Posts: 82
+[2025-01-22 16:52:43] INFO: 🎥 Videos: 62
+[2025-01-22 16:52:43] INFO: 📱 Reels: 0
+[2025-01-22 16:52:43] INFO: 🖼️ Images: 211
+[2025-01-22 16:52:43] INFO: 💬 Comments: 1339
+[2025-01-22 16:52:43] INFO: ❌ Failed: 4
+[2025-01-22 16:52:43] INFO: Processing post 83/235
+[2025-01-22 16:53:06] INFO: Statistics for hanwhalife:
+[2025-01-22 16:53:06] INFO: 📝 Posts: 83
+[2025-01-22 16:53:06] INFO: 🎥 Videos: 62
+[2025-01-22 16:53:06] INFO: 📱 Reels: 0
+[2025-01-22 16:53:06] INFO: 🖼️ Images: 213
+[2025-01-22 16:53:06] INFO: 💬 Comments: 1341
+[2025-01-22 16:53:06] INFO: ❌ Failed: 4
+[2025-01-22 16:53:06] INFO: Processing video 63/235
+[2025-01-22 16:54:02] INFO: Processing post 84/235
+[2025-01-22 16:54:36] INFO: Statistics for hanwhalife:
+[2025-01-22 16:54:36] INFO: 📝 Posts: 84
+[2025-01-22 16:54:36] INFO: 🎥 Videos: 63
+[2025-01-22 16:54:36] INFO: 📱 Reels: 0
+[2025-01-22 16:54:36] INFO: 🖼️ Images: 215
+[2025-01-22 16:54:36] INFO: 💬 Comments: 1344
+[2025-01-22 16:54:36] INFO: ❌ Failed: 4
+[2025-01-22 16:54:36] INFO: Processing video 64/235
+[2025-01-22 16:55:37] INFO: Processing video 65/235
+[2025-01-22 16:56:31] INFO: Processing post 85/235
+[2025-01-22 16:57:10] INFO: Statistics for hanwhalife:
+[2025-01-22 16:57:10] INFO: 📝 Posts: 85
+[2025-01-22 16:57:10] INFO: 🎥 Videos: 65
+[2025-01-22 16:57:10] INFO: 📱 Reels: 0
+[2025-01-22 16:57:10] INFO: 🖼️ Images: 219
+[2025-01-22 16:57:10] INFO: 💬 Comments: 1346
+[2025-01-22 16:57:10] INFO: ❌ Failed: 4
+[2025-01-22 16:57:10] INFO: Processing video 66/235
+[2025-01-22 16:58:10] INFO: Processing video 67/235
+[2025-01-22 16:58:50] INFO: Processing video 68/235
+[2025-01-22 17:00:26] INFO: Processing video 69/235
+[2025-01-22 17:01:06] INFO: Processing video 70/235
+[2025-01-22 17:02:01] INFO: Processing video 71/235
+[2025-01-22 17:02:56] INFO: Processing post 86/235
+[2025-01-22 17:03:20] INFO: Statistics for hanwhalife:
+[2025-01-22 17:03:20] INFO: 📝 Posts: 86
+[2025-01-22 17:03:20] INFO: 🎥 Videos: 71
+[2025-01-22 17:03:20] INFO: 📱 Reels: 0
+[2025-01-22 17:03:20] INFO: 🖼️ Images: 225
+[2025-01-22 17:03:20] INFO: 💬 Comments: 1358
+[2025-01-22 17:03:20] INFO: ❌ Failed: 4
+[2025-01-22 17:03:20] INFO: Processing post 87/235
+[2025-01-22 17:03:43] INFO: Statistics for hanwhalife:
+[2025-01-22 17:03:43] INFO: 📝 Posts: 87
+[2025-01-22 17:03:43] INFO: 🎥 Videos: 71
+[2025-01-22 17:03:43] INFO: 📱 Reels: 0
+[2025-01-22 17:03:43] INFO: 🖼️ Images: 227
+[2025-01-22 17:03:43] INFO: 💬 Comments: 1359
+[2025-01-22 17:03:43] INFO: ❌ Failed: 4
+[2025-01-22 17:03:43] INFO: Processing video 72/235
+[2025-01-22 17:04:33] INFO: Processing post 88/235
+[2025-01-22 17:04:51] INFO: Statistics for hanwhalife:
+[2025-01-22 17:04:51] INFO: 📝 Posts: 88
+[2025-01-22 17:04:51] INFO: 🎥 Videos: 72
+[2025-01-22 17:04:51] INFO: 📱 Reels: 0
+[2025-01-22 17:04:51] INFO: 🖼️ Images: 229
+[2025-01-22 17:04:51] INFO: 💬 Comments: 1360
+[2025-01-22 17:04:51] INFO: ❌ Failed: 4
+[2025-01-22 17:04:51] INFO: Processing video 73/235
+[2025-01-22 17:05:47] INFO: Processing post 89/235
+[2025-01-22 17:06:15] INFO: Statistics for hanwhalife:
+[2025-01-22 17:06:15] INFO: 📝 Posts: 89
+[2025-01-22 17:06:15] INFO: 🎥 Videos: 73
+[2025-01-22 17:06:15] INFO: 📱 Reels: 0
+[2025-01-22 17:06:15] INFO: 🖼️ Images: 235
+[2025-01-22 17:06:15] INFO: 💬 Comments: 1406
+[2025-01-22 17:06:15] INFO: ❌ Failed: 4
+[2025-01-22 17:06:15] INFO: Processing video 74/235
