@@ -45,12 +45,20 @@ def crawl(driver, cookies_path, page_link, page_name, logger, headless=False):
         return
 
     logger.info("Getting post URLs...")
-    post_urls = get_post_links(browser, page_link)
+    post_urls = get_post_links(
+        browser, 
+        page_link,
+        min_posts=page.get('min_posts', 20),  # Get from page config or default to 20
+        max_retries=page.get('max_retries', 3)  # Get from page config or default to 3
+    )
+    
     if not post_urls:
         logger.error("No posts found or error collecting posts")
         return False
-    
-    logger.success(f"Found {len(post_urls)} posts to process")
+    elif len(post_urls) < page.get('min_posts', 20):
+        logger.warning(f"Found only {len(post_urls)} posts, less than minimum {page.get('min_posts', 20)}")
+    else:
+        logger.success(f"Found {len(post_urls)} posts to process")
 
     if not os.path.exists(f"data/{page_name}"):
         os.makedirs(f"data/{page_name}")
@@ -267,7 +275,7 @@ if __name__ == "__main__":
     logger.section("Starting Facebook Crawler")
 
     # Set headless=False to see the browser window
-    headless = False  # Change this to True when running in production
+    headless = True  # Change this to True when running in production
     
     # Parallel processing of pages
     max_workers = min(4, len(PAGES))  # Limit concurrent processes

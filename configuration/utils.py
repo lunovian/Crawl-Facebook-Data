@@ -10,6 +10,7 @@ import requests
 from selenium.webdriver.common.keys import Keys
 import keyboard
 import re
+import random
 from random import uniform, choice
 import math
 from tqdm import tqdm
@@ -502,57 +503,133 @@ def verify_post_collection(driver, initial_posts):
     
     return verified_posts, missed_posts
 
-def get_post_links(driver, fanpage_url):
-    """Improved post link collection with double verification"""
-    post_urls = []
-    verified_urls = []
-    scan_count = 0
-    max_scans = 2  # Number of verification scans
+def get_post_links(driver, fanpage_url, min_posts=20, max_retries=3):
+    """Improved post link collection with retry mechanism"""
+    for attempt in range(max_retries):
+        post_urls = set()
+        last_height = 0
+        no_new_posts_count = 0
+        max_attempts = 5
+        
+        try:
+            print(f"\nCollection attempt {attempt + 1}/{max_retries}")
+            driver.get(fanpage_url)
+            sleep(3)
+            
+            # Reset scroll position
+            driver.execute_script("window.scrollTo(0, 0);")
+            sleep(1)
+            
+            print("\nCollecting posts...")
+            pbar = tqdm(desc="Scrolling for posts", unit=" scrolls")
+            
+            while no_new_posts_count < max_attempts:
+                # Get current posts
+                links = driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "a[href*='/posts/'], "
+                    "a[href*='/photos/'], "
+                    "a[href*='/videos/'], "
+                    "a[href*='/reel/'], "
+                    "a[href*='story_fbid=']"
+                )
+                
+                # Process found links
+                current_count = len(post_urls)
+                for link in links:
+                    try:
+                        url = link.get_attribute("href")
+                        if url and 'facebook.com' in url:
+                            clean_url = url.split('?')[0]  # Remove parameters
+                            if clean_url not in post_urls:
+                                post_urls.add(clean_url)
+                    except:
+                        continue
+                
+                # Update progress
+                new_count = len(post_urls)
+                if new_count > current_count:
+                    pbar.update(new_count - current_count)
+                    no_new_posts_count = 0
+                else:
+                    no_new_posts_count += 1
+                
+                # Scroll with human-like behavior
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    no_new_posts_count += 1
+                    if no_new_posts_count >= max_attempts:
+                        print("\nReached end of page")
+                        break
+                
+                # Scroll down with natural movement
+                scroll_amount = random.randint(300, 800)  # Random scroll amount
+                current_position = driver.execute_script("return window.pageYOffset")
+                target_position = min(current_position + scroll_amount, new_height - 800)
+                
+                # Smooth scroll
+                steps = 10
+                for i in range(steps):
+                    step = i / steps
+                    pos = current_position + (target_position - current_position) * step
+                    driver.execute_script(f"window.scrollTo(0, {pos})")
+                    sleep(0.05)
+                
+                sleep(uniform(1.5, 2.5))
+                last_height = new_height
+                
+                if keyboard.is_pressed('esc'):
+                    print("\nManual stop requested")
+                    break
+            
+            pbar.close()
+            
+            # Verify and clean posts
+            if post_urls:
+                print(f"\nFound {len(post_urls)} posts, verifying...")
+                verified_urls = []
+                
+                with tqdm(total=len(post_urls), desc="Verifying posts") as pbar:
+                    for url in post_urls:
+                        try:
+                            driver.get(url)
+                            sleep(0.5)
+                            if not any(x in driver.current_url for x in ['page_not_found', 'login', 'checkpoint']):
+                                verified_urls.append(url)
+                            pbar.update(1)
+                        except:
+                            pbar.update(1)
+                            continue
+                
+                print(f"Successfully verified {len(verified_urls)} posts")
+                
+                # Check if we have enough posts
+                if len(verified_urls) >= min_posts:
+                    print(f"✓ Found sufficient posts ({len(verified_urls)} >= {min_posts})")
+                    return verified_urls
+                else:
+                    print(f"✗ Insufficient posts ({len(verified_urls)} < {min_posts})")
+                    if attempt < max_retries - 1:
+                        print("Retrying collection...")
+                        sleep(5)  # Wait before retry
+                        continue
+            else:
+                print("No posts found in this attempt!")
+                if attempt < max_retries - 1:
+                    print("Retrying collection...")
+                    sleep(5)
+                    continue
+        
+        except Exception as e:
+            print(f"Error during collection attempt {attempt + 1}: {str(e)}")
+            if attempt < max_retries - 1:
+                print("Retrying after error...")
+                sleep(5)
+                continue
     
-    try:
-        # Initial post collection
-        driver.get(fanpage_url)
-        sleep(uniform(3, 4))
-        
-        print("Initial post collection...")
-        # ...existing post collection code...
-        
-        # Remove duplicates
-        initial_posts = list(set(post_urls))
-        print(f"\nInitial collection found {len(initial_posts)} posts")
-        
-        # First verification scan
-        verified_posts, missed_posts = verify_post_collection(driver, initial_posts)
-        
-        # Additional verification scans if posts were missed
-        while missed_posts and scan_count < max_scans:
-            scan_count += 1
-            print(f"\nPerforming verification scan {scan_count}/{max_scans}")
-            print(f"Checking {len(missed_posts)} potentially missed posts...")
-            
-            # Retry missed posts
-            additional_verified, still_missed = verify_post_collection(driver, missed_posts)
-            verified_posts.extend(additional_verified)
-            missed_posts = still_missed
-            
-            if not missed_posts:
-                print("All posts verified successfully!")
-                break
-        
-        # Final results
-        total_verified = len(verified_posts)
-        total_missed = len(missed_posts)
-        
-        print(f"\nFinal Results:")
-        print(f"✓ Successfully verified: {total_verified} posts")
-        if missed_posts:
-            print(f"✗ Could not verify: {total_missed} posts")
-        
-        return verified_posts
-
-    except Exception as e:
-        print(f"Error during post collection: {e}")
-        return verified_posts if verified_posts else []
+    # If we get here, we've exhausted all retries
+    print(f"\n⚠️ Warning: Could not collect minimum required posts ({min_posts}) after {max_retries} attempts")
+    return list(post_urls) if post_urls else []
 
 # Add easing function for smooth scrolling
 def easeInOutQuad(t):

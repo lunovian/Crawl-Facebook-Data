@@ -198,53 +198,44 @@ def manual_login(browser, mobile=False):
         return False
 
 def is_logged_in(browser, mobile=False):
-    """Check if currently logged in using multiple selectors"""
+    """Enhanced login verification with better mobile support"""
     try:
         wait = WebDriverWait(browser, 10)
         
+        # Common selectors that work for both mobile and desktop
+        common_selectors = [
+            "//div[@role='banner']",
+            "//div[contains(@class, 'x1lliihq')]",
+            "//div[contains(@class, 'x1n2onr6')]"
+        ]
+        
+        for selector in common_selectors:
+            try:
+                if wait.until(EC.presence_of_element_located((By.XPATH, selector))):
+                    return True
+            except:
+                continue
+
+        # Check URL-based login status
+        current_url = browser.current_url.lower()
         if mobile:
-            # Mobile-specific selectors
-            mobile_selectors = [
-                "//div[@data-sigil='MTopBlueBarHeader']",
-                "//a[@aria-label='Facebook']",
-                "//div[@id='MRoot']",
-                "//div[contains(@class, '_7om2')]",  # Mobile header class
-                "//div[@role='banner']",
-                "//a[@href='/home.php']"
-            ]
-            for selector in mobile_selectors:
-                try:
-                    wait.until(EC.presence_of_element_located((By.XPATH, selector)))
-                    return True
-                except:
-                    continue
-
-            # Check mobile-specific URLs
-            current_url = browser.current_url
-            return any(x in current_url for x in ['m.facebook.com/home.php', 'm.facebook.com/?_rdr'])
+            return any(x in current_url for x in ['m.facebook.com/home', 'm.facebook.com/?sk=h_chr'])
         else:
-            # Desktop selectors
-            desktop_selectors = [
-                "//div[@role='banner']",
-                "//div[@aria-label='Facebook']",
-                "//div[contains(@class, 'x1n2onr6')]//a[@aria-label='Facebook']",
-                "//div[contains(@class, 'x1lliihq')]",
-                "//input[@name='global_typeahead']"
-            ]
-            for selector in desktop_selectors:
-                try:
-                    wait.until(EC.presence_of_element_located((By.XPATH, selector)))
-                    return True
-                except:
-                    continue
+            return any(x in current_url for x in ['facebook.com/home', '/?sk=h_chr'])
 
-            # Check desktop URLs
-            current_url = browser.current_url
-            return "home.php" in current_url or "/?sk=h_chr" in current_url
+        return False
 
     except Exception as e:
         print(f"Login check error: {str(e)}")
         return False
+
+def verify_login(browser, mobile=False, retries=3):
+    """Verify login with multiple attempts"""
+    for i in range(retries):
+        if is_logged_in(browser, mobile):
+            return True
+        sleep(uniform(1, 2))
+    return False
 
 def optimize_wait_times(browser):
     """Optimize page load timeouts"""
@@ -313,15 +304,7 @@ def login(driver_path, cookies_path, headless=False):
         return None
 
 def login_mobile(driver_path, cookies_path, headless=False):
-    """
-    Logs into Facebook using saved cookies, emulating a mobile device, 
-    with enhanced bot detection avoidance.
-
-    Args:
-        driver_path: Path to the chromedriver executable.
-        cookies_path: Path to the file containing saved cookies.
-        headless: Boolean to control headless mode
-    """
+    """Enhanced mobile login with better verification"""
     try:
         options = get_base_options(headless=headless)
         options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone X"})
@@ -349,17 +332,17 @@ def login_mobile(driver_path, cookies_path, headless=False):
             browser.get('https://m.facebook.com/')
             sleep(uniform(2, 3))
 
-            if is_logged_in(browser, mobile=True):  # Pass mobile=True here
+            if verify_login(browser, mobile=True):
                 print("Successfully logged in mobile with cookies!")
                 return browser
-            else:
-                print("Mobile cookie login failed, trying manual login...")
-        else:
-            print("No cookies found, trying manual mobile login...")
 
+        # If we get here, try manual login
         if manual_login(browser, mobile=True):
-            return browser
-
+            if verify_login(browser, mobile=True):
+                print("Successfully logged in mobile manually!")
+                return browser
+        
+        print("Mobile login failed completely")
         browser.quit()
         return None
 
