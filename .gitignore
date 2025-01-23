@@ -6,3 +6,5 @@ information.py
 *.pyc
 /reports
 /logs
+*.log
+/logs

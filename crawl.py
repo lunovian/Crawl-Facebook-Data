@@ -9,6 +9,9 @@ from time import time, sleep
 import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
 from pages import PAGES
 import subprocess
@@ -17,6 +20,17 @@ from configuration.report_generator import ReportGenerator
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import signal
 from collections import defaultdict
+
+def prevent_scroll(browser):
+    """Prevent automatic scrolling"""
+    browser.execute_script("""
+        window.scrollTo = function() {};
+        window.scroll = function() {};
+        window.addEventListener('scroll', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }, true);
+    """)
 
 def crawl(driver, cookies_path, page_link, page_name, logger, headless=False):
     logger.info(f"Starting crawl for {page_name}")
@@ -87,11 +101,30 @@ def crawl(driver, cookies_path, page_link, page_name, logger, headless=False):
                 stats['videos'] += 1
                 logger.info(f"Processing video {stats['videos']}/{len(post_urls)}")
                 browser.get(url)
+                sleep(2)  # Wait for initial load
+                
+                # Force scroll to top and prevent auto-scrolling
+                browser.execute_script("window.scrollTo(0, 0);")
+                prevent_scroll(browser)
+                sleep(1)
 
+                # Pause video to prevent auto-scroll behavior
                 try:
-                    click_see_more(browser)
+                    video_element = browser.find_element(By.TAG_NAME, "video")
+                    browser.execute_script("arguments[0].pause();", video_element)
                 except:
                     pass
+
+                # Process video content
+                try:
+                    see_more_element = WebDriverWait(browser, 10).until(
+                        EC.presence_of_element_located((By.XPATH, '//div[contains(text(), "See more") or contains(@aria-label, "See more")]'))
+                    )
+                    ActionChains(browser).move_to_element(see_more_element).perform()
+                    sleep(0.5)
+                    click_see_more(browser)
+                except:
+                    logger.warning("Could not find See more button")
 
                 captions = get_captions_spe(browser)
                 save_text(captions, f"{folder}/caption.txt")
@@ -100,9 +133,11 @@ def crawl(driver, cookies_path, page_link, page_name, logger, headless=False):
                     click_see_less(browser)
                 except:
                     pass
-                
 
                 try:
+                    # Scroll up before clicking see all
+                    browser.execute_script("window.scrollTo(0, 0);")
+                    sleep(1)
                     click_see_all(browser)
                     sleep(1)
                 except Exception:

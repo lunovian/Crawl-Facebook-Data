@@ -30,7 +30,9 @@ __all__ = [
     'get_captions_reel',
     'click_comment_button',
     'extract_facebook_post_id',
-    'save_text'
+    'save_text',
+    'handle_video_page',
+    'verify_post_collection'
 ]
 
 def show_all_comments(driver):
@@ -420,136 +422,137 @@ def download_videos(video_urls, download_dir="videos"):
         except requests.exceptions.RequestException as e:
             print(f"Error downloading video from {url}: {e}")
 
+def smooth_scroll_to(browser, position, duration=1.0, steps=30):
+    """
+    Perform a smooth scroll animation to a specific position
+    """
+    current_pos = browser.execute_script("return window.pageYOffset;")
+    distance = position - current_pos
+    step_size = distance / steps
+    step_duration = duration / steps
+    
+    for i in range(steps + 1):
+        step = i / steps  # Progress from 0 to 1
+        # Use easeInOutCubic easing function for smoother motion
+        current_step = step * step * (3 - 2 * step)
+        current_position = current_pos + (distance * current_step)
+        browser.execute_script(f"window.scrollTo(0, {current_position});")
+        sleep(step_duration)
+
 def natural_scroll(driver, scroll_type="normal"):
     """Enhanced natural scrolling with better coverage"""
     viewport_height = driver.execute_script("return window.innerHeight")
     scroll_height = driver.execute_script("return document.body.scrollHeight")
     current_position = driver.execute_script("return window.pageYOffset")
     
+    # Calculate scroll distance based on viewport
     if scroll_type == "small":
-        scroll_distance = uniform(viewport_height * 0.3, viewport_height * 0.5)
+        scroll_distance = uniform(viewport_height * 0.2, viewport_height * 0.4)
     else:
-        scroll_distance = uniform(viewport_height * 0.7, viewport_height * 0.9)
+        scroll_distance = uniform(viewport_height * 0.6, viewport_height * 0.8)
     
-    new_position = min(current_position + scroll_distance, scroll_height - viewport_height)
+    # Calculate target position with some randomness
+    new_position = min(
+        current_position + scroll_distance + uniform(-50, 50),
+        scroll_height - viewport_height
+    )
     
-    # Smooth scroll
-    steps = int(uniform(15, 25))
-    for i in range(steps):
-        step = easeInOutQuad(i / steps)
-        pos = current_position + (new_position - current_position) * step
-        driver.execute_script(f"window.scrollTo(0, {pos});")
-        sleep(uniform(0.01, 0.03))
+    # Perform smooth scroll with random duration
+    smooth_scroll_to(
+        driver,
+        new_position,
+        duration=uniform(0.8, 1.5),
+        steps=int(uniform(25, 35))
+    )
     
-    # Random pause
-    sleep(uniform(0.8, 1.5))
+    # Add natural pause with slight variation
+    sleep(uniform(0.3, 0.7))
     
     # Check if reached bottom
     final_position = driver.execute_script("return window.pageYOffset")
     max_scroll = scroll_height - viewport_height
-    return final_position >= max_scroll * 0.98  # 98% of max scroll considered bottom
+    return final_position >= max_scroll * 0.98
+
+def verify_post_collection(driver, initial_posts):
+    """Double check for missed posts"""
+    print("\nPerforming verification scan...")
+    verified_posts = []
+    missed_posts = []
+    
+    # Scroll back to top
+    driver.execute_script("window.scrollTo(0, 0);")
+    sleep(2)
+    
+    with tqdm(total=len(initial_posts), desc="Verifying posts") as pbar:
+        for post in initial_posts:
+            try:
+                # Check if post is actually accessible
+                driver.get(post)
+                sleep(uniform(0.3, 0.7))
+                
+                if not any(x in driver.current_url for x in ['page_not_found', 'login', 'checkpoint']):
+                    verified_posts.append(post)
+                else:
+                    missed_posts.append(post)
+                pbar.update(1)
+            except:
+                missed_posts.append(post)
+                pbar.update(1)
+                continue
+    
+    return verified_posts, missed_posts
 
 def get_post_links(driver, fanpage_url):
-    """Improved post link collection with better scrolling and verification"""
+    """Improved post link collection with double verification"""
     post_urls = []
-    last_count = 0
-    no_new_count = 0
-    max_attempts = 30  # Increased maximum attempts
+    verified_urls = []
+    scan_count = 0
+    max_scans = 2  # Number of verification scans
     
     try:
-        # Navigate and wait for initial load
+        # Initial post collection
         driver.get(fanpage_url)
-        sleep(uniform(3, 5))
+        sleep(uniform(3, 4))
         
-        print("Collecting post URLs...")
-        pbar = tqdm(total=None, desc="Scrolling for posts")
+        print("Initial post collection...")
+        # ...existing post collection code...
         
-        while True:
-            try:
-                # Find all post links with expanded selectors
-                links = driver.find_elements(
-                    By.CSS_SELECTOR,
-                    (
-                        "a[href*='/posts/'], "
-                        "a[href*='/photos/'], "
-                        "a[href*='/videos/'], "
-                        "a[href*='/reels/'], "
-                        "a[href*='story_fbid='], "
-                        "a[href*='?v='], "
-                        "a[href*='photo.php'], "
-                        "a[href*='video.php']"
-                    )
-                )
-                
-                # Process found links
-                current_count = len(post_urls)
-                for link in links:
-                    try:
-                        url = link.get_attribute("href")
-                        if url and 'facebook.com' in url:
-                            # Clean URL
-                            base_url = url.split('?')[0]
-                            if base_url not in post_urls:
-                                post_urls.append(base_url)
-                    except:
-                        continue
-                
-                # Update progress
-                if len(post_urls) > current_count:
-                    pbar.update(len(post_urls) - current_count)
-                    no_new_count = 0
-                else:
-                    no_new_count += 1
-                
-                # Check for scroll end
-                if no_new_count >= max_attempts:
-                    print("\nNo new posts found after multiple attempts")
-                    break
-                
-                if keyboard.is_pressed('esc'):
-                    print("\nManual stop requested")
-                    break
-                
-                # Scroll with natural behavior
-                last_height = driver.execute_script("return document.body.scrollHeight")
-                scroll_amount = uniform(500, 1000)  # Random scroll amount
-                driver.execute_script(f"window.scrollBy(0, {scroll_amount});")
-                sleep(uniform(1, 2))
-                
-                # Check if reached bottom
-                new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
-                    no_new_count += 1
-                
-            except Exception as e:
-                print(f"\nError during scrolling: {e}")
-                sleep(2)
-                continue
+        # Remove duplicates
+        initial_posts = list(set(post_urls))
+        print(f"\nInitial collection found {len(initial_posts)} posts")
         
-        pbar.close()
+        # First verification scan
+        verified_posts, missed_posts = verify_post_collection(driver, initial_posts)
         
-        # Clean and verify URLs
-        unique_urls = list(set(post_urls))  # Remove duplicates
-        print(f"\nFound {len(unique_urls)} unique posts")
+        # Additional verification scans if posts were missed
+        while missed_posts and scan_count < max_scans:
+            scan_count += 1
+            print(f"\nPerforming verification scan {scan_count}/{max_scans}")
+            print(f"Checking {len(missed_posts)} potentially missed posts...")
+            
+            # Retry missed posts
+            additional_verified, still_missed = verify_post_collection(driver, missed_posts)
+            verified_posts.extend(additional_verified)
+            missed_posts = still_missed
+            
+            if not missed_posts:
+                print("All posts verified successfully!")
+                break
         
-        # Verify URLs
-        verified_urls = []
-        print("Verifying post URLs...")
-        for url in tqdm(unique_urls, desc="Verifying URLs"):
-            try:
-                driver.get(url)
-                sleep(uniform(0.5, 1))
-                if not any(x in driver.current_url for x in ['page_not_found', 'login', 'checkpoint']):
-                    verified_urls.append(url)
-            except:
-                continue
+        # Final results
+        total_verified = len(verified_posts)
+        total_missed = len(missed_posts)
         
-        print(f"Successfully verified {len(verified_urls)} posts")
-        return verified_urls
+        print(f"\nFinal Results:")
+        print(f"✓ Successfully verified: {total_verified} posts")
+        if missed_posts:
+            print(f"✗ Could not verify: {total_missed} posts")
+        
+        return verified_posts
 
     except Exception as e:
-        print(f"Error collecting posts: {e}")
-        return post_urls if post_urls else []
+        print(f"Error during post collection: {e}")
+        return verified_posts if verified_posts else []
 
 # Add easing function for smooth scrolling
 def easeInOutQuad(t):
@@ -599,3 +602,31 @@ def remove_duplicate_links(links):
         if post_id and post_id not in unique_links:
             unique_links[post_id] = link
     return list(unique_links.values())
+
+def handle_video_page(driver):
+    """Stabilize video page and prevent scrolling"""
+    try:
+        # Stop video autoplay
+        video_elements = driver.find_elements(By.TAG_NAME, "video")
+        for video in video_elements:
+            driver.execute_script("""
+                arguments[0].pause();
+                arguments[0].removeAttribute('autoplay');
+                arguments[0].muted = true;
+            """, video)
+
+        # Disable scroll events
+        driver.execute_script("""
+            window._scrollEnabled = false;
+            window.addEventListener('scroll', function(e) {
+                if (!window._scrollEnabled) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+            }, true);
+        """)
+        
+        return True
+    except Exception as e:
+        print(f"Error stabilizing video page: {e}")
+        return False

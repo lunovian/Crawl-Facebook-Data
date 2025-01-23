@@ -22,15 +22,33 @@ def get_base_options(headless=False):
     """Enhanced stealth options for Chrome with performance optimizations"""
     options = Options()
     
-    # Performance optimizations
+    # Performance optimizations with error fixes
     if headless:
-        options.add_argument('--headless=new')  # Only add headless if specified
+        options.add_argument('--headless=new')
     
-    # GPU-specific fixes
-    options.add_argument('--disable-gpu-sandbox')
-    options.add_argument('--ignore-gpu-blocklist')
-    options.add_argument('--disable-gpu')  # Needed for Windows
+    # Disable GPU features causing errors
+    options.add_argument('--disable-gpu')
     options.add_argument('--disable-software-rasterizer')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu-compositing')
+    options.add_argument('--disable-gpu-rasterization')
+    options.add_argument('--disable-gpu-sandbox')
+    options.add_argument('--disable-accelerated-2d-canvas')
+    options.add_argument('--disable-accelerated-jpeg-decoding')
+    options.add_argument('--disable-accelerated-mjpeg-decode')
+    options.add_argument('--disable-accelerated-video-decode')
+    options.add_argument('--disable-webgl')
+    options.add_argument('--disable-3d-apis')
+    
+    # USB error fixes
+    options.add_argument('--disable-usb-keyboard-detect')
+    options.add_argument('--disable-usb-security-expiration')
+    
+    # Additional error prevention
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-machine-cert-request')
+    options.add_argument('--disable-features=UserAgentClientHint')
+    options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
     
     # Rest of your existing options
     options.add_argument('--disable-extensions')
